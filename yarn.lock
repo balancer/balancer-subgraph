@@ -9,12 +9,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@graphprotocol/graph-cli@^0.16.0":
+
+"@graphprotocol/graph-cli@^0.16.2":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@graphprotocol/graph-cli/-/graph-cli-0.16.2.tgz#3396e444decbe582c962d27e88f9804371d974fe"
   integrity sha512-6kaJmTQFj6BlDJfvoFnvcfy+a7nXlq7BVZqqrWHSXmKafr9IXVfuihFBOdXI5Sq+n09+bL4kZerd/cohnsWM3Q==
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
+    assemblyscript "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
     chalk "^2.4.1"
     chokidar "^3.0.2"
     debug "^4.1.1"
@@ -39,7 +40,7 @@
   resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.16.0.tgz#a6f5e8a39b7d651887c80bb2422cfb3a0fbf55d7"
   integrity sha512-zDhlIYlzE0xq5cJkF6fGwshfPR2z6rRZetNCgEclAtDv1uPSQaPQJuiIWL2hpTMjYHLX2OSNxy8F1G69jC708A==
   dependencies:
-    assemblyscript "https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3"
+    assemblyscript "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
 
 "@protobufjs/utf8@^1.1.0":
   version "1.1.0"
@@ -264,6 +265,18 @@ asn1@~0.2.3:
     safer-buffer "~2.1.0"
 
 "assemblyscript@git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3":
+  version "0.6.0"
+  uid "36040d5b5312f19a025782b5e36663823494c2f3"
+  resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
+  dependencies:
+    "@protobufjs/utf8" "^1.1.0"
+    binaryen "77.0.0-nightly.20190407"
+    glob "^7.1.3"
+    long "^4.0.0"
+    opencollective-postinstall "^2.0.0"
+    source-map-support "^0.5.11"
+
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript#36040d5b5312f19a025782b5e36663823494c2f3":
   version "0.6.0"
   resolved "git+https://github.com/AssemblyScript/assemblyscript.git#36040d5b5312f19a025782b5e36663823494c2f3"
   dependencies:
@@ -4361,10 +4374,10 @@ truffle-interface-adapter@^0.2.5:
     lodash "^4.17.13"
     web3 "1.2.1"
 
-truffle@^5.0.4:
-  version "5.0.41"
-  resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.0.41.tgz#a7ef0b6e97d3a22aaf5da2cc4ef6a13f39596ffb"
-  integrity sha512-vQm7OHRN8qh4Te3QZ9A74JsDoZfcYoJLuI1FrcLpJoicdTrzCZU4UXGIYFUIZ+UmOTlMS07lUufxDSraSHxpdg==
+truffle@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.1.0.tgz#670d6791a2a97c6bf852d28a978e6635fe3c883a"
+  integrity sha512-RKij9cFhHeAb8HuP8D/llpcbe+k40fg8Q2SAeR+mkvlz9tid/opYkrWs9XN8eRQKCC0SSygrKBZLG3CMsNbXwQ==
   dependencies:
     app-module-path "^2.2.0"
     mocha "5.2.0"
