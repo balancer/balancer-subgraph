@@ -364,10 +364,10 @@ export function handleGulp(event: LOG_CALL): void {
 export function handleJoinPool(event: LOG_JOIN): void {
   let poolId = event.address.toHex()
   let address = event.params.tokenIn.toHex()
-
   let pool = Pool.load(poolId)
+
   pool.joinsCount += BigInt.fromI32(1)
-  pool.save()
+  
 
   let poolTokenId = poolId.concat('-').concat(address.toString())
   let poolToken = PoolToken.load(poolTokenId)
@@ -377,10 +377,12 @@ export function handleJoinPool(event: LOG_JOIN): void {
   poolToken.save()
 
   if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
-    let liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight));
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);;
   } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
-    let liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).times(BigDecimal.fromString('235'));
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);
   }
+
+  pool.save()
 
   let tx = event.transaction.hash.toHexString().concat('-').concat(event.logIndex.toString())
   let transaction = Transaction.load(tx)
@@ -400,17 +402,27 @@ export function handleJoinPool(event: LOG_JOIN): void {
 
 export function handleExitPool(event: LOG_EXIT): void {
   let poolId = event.address.toHex()
-  let pool = Pool.load(poolId)
-  pool.exitsCount += BigInt.fromI32(1)
-  pool.save()
-
   let address = event.params.tokenOut.toHex()
+  let pool = Pool.load(poolId)
+
+  pool.exitsCount += BigInt.fromI32(1)
+
+  
   let poolTokenId = poolId.concat('-').concat(address.toString())
   let poolToken = PoolToken.load(poolTokenId)
   let tokenAmountOut = tokenToDecimal(event.params.tokenAmountOut.toBigDecimal(), poolToken.decimals)
   let newAmount = poolToken.balance.minus(tokenAmountOut)
   poolToken.balance = newAmount
   poolToken.save()
+
+  // HACK to get rough liquidity. Will update later
+  if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);;
+  } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);
+  }
+
+  pool.save()
 
   let tx = event.transaction.hash.toHexString().concat('-').concat(event.logIndex.toString())
   let transaction = Transaction.load(tx)
