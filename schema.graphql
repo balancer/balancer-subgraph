@@ -15,6 +15,7 @@ type Pool @entity {
     swapFee: BigDecimal!                                # Swap Fees
     totalWeight: BigDecimal!
     totalShares: BigDecimal!                            # Total pool token shares
+    liquidity: BigDecimal!
     tokensList: [Bytes!]                                # Temp workaround until graph supports filtering on derived field
     tokens: [PoolToken!] @derivedFrom(field: "poolId")
     shares: [PoolShare!] @derivedFrom(field: "poolId")

@@ -363,17 +363,24 @@ export function handleGulp(event: LOG_CALL): void {
 
 export function handleJoinPool(event: LOG_JOIN): void {
   let poolId = event.address.toHex()
+  let address = event.params.tokenIn.toHex()
+
   let pool = Pool.load(poolId)
   pool.joinsCount += BigInt.fromI32(1)
   pool.save()
 
-  let address = event.params.tokenIn.toHex()
   let poolTokenId = poolId.concat('-').concat(address.toString())
   let poolToken = PoolToken.load(poolTokenId)
   let tokenAmountIn = tokenToDecimal(event.params.tokenAmountIn.toBigDecimal(), poolToken.decimals)
   let newAmount = poolToken.balance.plus(tokenAmountIn)
   poolToken.balance = newAmount
   poolToken.save()
+
+  if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+    let liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight));
+  } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+    let liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).times(BigDecimal.fromString('235'));
+  }
 
   let tx = event.transaction.hash.toHexString().concat('-').concat(event.logIndex.toString())
   let transaction = Transaction.load(tx)
