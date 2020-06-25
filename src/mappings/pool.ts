@@ -253,6 +253,7 @@ export function handleRebind(event: LOG_CALL): void {
 
   let poolTokenId = poolId.concat('-').concat(address.toHexString())
   let poolToken = PoolToken.load(poolTokenId)
+
   if (poolToken == null) {
     createPoolTokenEntity(poolTokenId, poolId, address.toHexString())
     poolToken = PoolToken.load(poolTokenId)
@@ -260,13 +261,21 @@ export function handleRebind(event: LOG_CALL): void {
   } else {
     let oldWeight = poolToken.denormWeight
     if (denormWeight > oldWeight) {
+      //newTotalWeight = pool.totalWeight + (denormWeight - oldWeight);
       pool.totalWeight = pool.totalWeight + (denormWeight - oldWeight);
     } else {
+      //newTotalWeight = pool.totalWeight - (oldWeight - denormWeight);
       pool.totalWeight = pool.totalWeight - (oldWeight - denormWeight);
     }
   }
 
   let balance = hexToDecimal(event.params.data.toHexString().slice(74,138), poolToken.decimals)
+
+  if (address.toHexString() == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+    pool.liquidity = balance.div(denormWeight.div(pool.totalWeight)).truncate(18);
+  } else if (address.toHexString() == '0x6b175474e89094c44da98b954eedeac495271d0f' || address.toHexString() == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+    pool.liquidity = balance.div(denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
+  }
 
   poolToken.balance = balance
   poolToken.denormWeight = denormWeight
@@ -377,9 +386,9 @@ export function handleJoinPool(event: LOG_JOIN): void {
   poolToken.save()
 
   if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
-    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);;
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
   } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
-    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
   pool.save()
@@ -417,9 +426,9 @@ export function handleExitPool(event: LOG_EXIT): void {
 
   // HACK to get rough liquidity. Will update later
   if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
-    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);;
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
   } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
-    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);
+    pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
   pool.save()
