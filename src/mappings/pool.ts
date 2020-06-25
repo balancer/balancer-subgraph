@@ -281,6 +281,7 @@ export function handleRebind(event: LOG_CALL): void {
     }
   }
 
+  // log.info(`!!!!!! TEST 1`, [])
   let balance = hexToDecimal(event.params.data.toHexString().slice(74,138), poolToken.decimals)
 
   if (address.toHexString() == WETH) {
@@ -396,10 +397,11 @@ export function handleJoinPool(event: LOG_JOIN): void {
   let newAmount = poolToken.balance.plus(tokenAmountIn)
   poolToken.balance = newAmount
   poolToken.save()
+  // log.info(`!!!!!! TEST 2`, [])
 
-  if (address == WETH) {
+  if (address.toString() == WETH) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
-  } else if (address == DAI || address == USDC) {
+  } else if (address.toString() == DAI || address.toString() == USDC) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
@@ -436,10 +438,12 @@ export function handleExitPool(event: LOG_EXIT): void {
   poolToken.balance = newAmount
   poolToken.save()
 
+  // log.info(`!!!!!! TEST 3`, [])
+
   // HACK to get rough liquidity. Will update later
-  if (address == WETH) {
+  if (address.toString() == WETH) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
-  } else if (address == DAI || address == USDC) {
+  } else if (address.toString() == DAI || address.toString() == USDC) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
