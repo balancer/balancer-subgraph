@@ -1,4 +1,4 @@
-WETHimport { BigInt, BigDecimal, Address, Bytes, ByteArray, log, store } from '@graphprotocol/graph-ts'
+import { BigInt, BigDecimal, Address, Bytes, ByteArray, log, store } from '@graphprotocol/graph-ts'
 import { LOG_CALL, LOG_JOIN, LOG_EXIT, LOG_SWAP, Transfer } from '../types/templates/Pool/Pool'
 import { BToken } from '../types/templates/Pool/BToken'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
@@ -25,9 +25,9 @@ import {
 
 
 // KOVAN ADDRESSES
- const WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c';
- const DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c';
- const USDC = '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5';
+let WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c';
+let DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c';
+let USDC = '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5';
 
 function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
