@@ -1,4 +1,4 @@
-import { BigInt, BigDecimal, Address, Bytes, ByteArray, log, store } from '@graphprotocol/graph-ts'
+WETHimport { BigInt, BigDecimal, Address, Bytes, ByteArray, log, store } from '@graphprotocol/graph-ts'
 import { LOG_CALL, LOG_JOIN, LOG_EXIT, LOG_SWAP, Transfer } from '../types/templates/Pool/Pool'
 import { BToken } from '../types/templates/Pool/BToken'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
@@ -16,6 +16,18 @@ import {
 /************************************
  ********** Helpers ***********
  ************************************/
+ // MAINNET ADDRESSES
+ /*
+ const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+ const DAI = '0x6b175474e89094c44da98b954eedeac495271d0f';
+ const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+ */
+
+
+// KOVAN ADDRESSES
+ const WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c';
+ const DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c';
+ const USDC = '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5';
 
 function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
@@ -271,9 +283,9 @@ export function handleRebind(event: LOG_CALL): void {
 
   let balance = hexToDecimal(event.params.data.toHexString().slice(74,138), poolToken.decimals)
 
-  if (address.toHexString() == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+  if (address.toHexString() == WETH) {
     pool.liquidity = balance.div(denormWeight.div(pool.totalWeight)).truncate(18);
-  } else if (address.toHexString() == '0x6b175474e89094c44da98b954eedeac495271d0f' || address.toHexString() == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+  } else if (address.toHexString() == DAI || address.toHexString() == USDC) {
     pool.liquidity = balance.div(denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
@@ -376,7 +388,7 @@ export function handleJoinPool(event: LOG_JOIN): void {
   let pool = Pool.load(poolId)
 
   pool.joinsCount += BigInt.fromI32(1)
-  
+
 
   let poolTokenId = poolId.concat('-').concat(address.toString())
   let poolToken = PoolToken.load(poolTokenId)
@@ -385,9 +397,9 @@ export function handleJoinPool(event: LOG_JOIN): void {
   poolToken.balance = newAmount
   poolToken.save()
 
-  if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+  if (address == WETH) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
-  } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+  } else if (address == DAI || address == USDC) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
@@ -416,7 +428,7 @@ export function handleExitPool(event: LOG_EXIT): void {
 
   pool.exitsCount += BigInt.fromI32(1)
 
-  
+
   let poolTokenId = poolId.concat('-').concat(address.toString())
   let poolToken = PoolToken.load(poolTokenId)
   let tokenAmountOut = tokenToDecimal(event.params.tokenAmountOut.toBigDecimal(), poolToken.decimals)
@@ -425,9 +437,9 @@ export function handleExitPool(event: LOG_EXIT): void {
   poolToken.save()
 
   // HACK to get rough liquidity. Will update later
-  if (address == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2') {
+  if (address == WETH) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
-  } else if (address == '0x6b175474e89094c44da98b954eedeac495271d0f' || address == '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48') {
+  } else if (address == DAI || address == USDC) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).div(BigDecimal.fromString('235')).truncate(18);
   }
 
