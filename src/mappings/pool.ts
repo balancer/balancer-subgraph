@@ -22,8 +22,6 @@ import {
  const DAI = '0x6b175474e89094c44da98b954eedeac495271d0f';
  const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
  */
-
-
 // KOVAN ADDRESSES
 let WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c';
 let DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c';
@@ -69,7 +67,7 @@ function createPoolTokenEntity(id: string, pool: String, address: String): void 
   let decimals = 18
 
   // COMMENT THE LINES BELOW OUT FOR LOCAL DEV ON KOVAN
-
+/*
   let symbolCall = token.try_symbol()
   let nameCall = token.try_name()
   let decimalCall = token.try_decimals()
@@ -95,12 +93,12 @@ function createPoolTokenEntity(id: string, pool: String, address: String): void 
   if (!decimalCall.reverted) {
     decimals = decimalCall.value
   }
-
+*/
   // COMMENT THE LINES ABOVE OUT FOR LOCAL DEV ON KOVAN
 
   // !!! COMMENT THE LINES BELOW OUT FOR NON-LOCAL DEPLOYMENT
   // This code allows Symbols to be added when testing on local Kovan
-  /*
+
   if(address == '0xd0a1e359811322d97991e03f863a0c30c2cf029c')
     symbol = 'WETH';
   else if(address == '0x1528f3fcc26d13f7079325fb78d9442607781c8c')
@@ -115,7 +113,7 @@ function createPoolTokenEntity(id: string, pool: String, address: String): void 
     symbol = 'SNX'
   else if(address == '0x8c9e6c40d3402480ace624730524facc5482798c')
     symbol = 'REP'
-  */
+
   // !!! COMMENT THE LINES ABOVE OUT FOR NON-LOCAL DEPLOYMENT
 
   let poolToken = new PoolToken(id)
@@ -281,7 +279,6 @@ export function handleRebind(event: LOG_CALL): void {
     }
   }
 
-  // log.info(`!!!!!! TEST 1`, [])
   let balance = hexToDecimal(event.params.data.toHexString().slice(74,138), poolToken.decimals)
 
   if (address.toHexString() == WETH) {
@@ -350,6 +347,15 @@ export function handleGulp(event: LOG_CALL): void {
 
   let address = Address.fromString(event.params.data.toHexString().slice(-40))
 
+  // This is a fix to remove non-ERC20 tokens used on Kovan
+  if(
+    address.toHexString() == '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a' ||
+  address.toHexString() == '0xa79383e0d2925527ba5ec1c1bcaa13c28ee00314' ||
+  address.toHexString() == '0x02f626c6ccb6d2ebc071c068dc1f02bf5693416a' ||
+  address.toHexString() == '0xb9c1434ab6d5811d1d0e92e8266a37ae8328e901' ||
+  address.toHexString() == '0xa01ba9fb493b851f4ac5093a324cb081a909c34b')
+    return
+
   let token = BToken.bind(address)
   let balanceCall = token.try_balanceOf(Address.fromString(poolId))
 
@@ -397,7 +403,6 @@ export function handleJoinPool(event: LOG_JOIN): void {
   let newAmount = poolToken.balance.plus(tokenAmountIn)
   poolToken.balance = newAmount
   poolToken.save()
-  // log.info(`!!!!!! TEST 2`, [])
 
   if (address.toString() == WETH) {
     pool.liquidity = newAmount.div(poolToken.denormWeight.div(pool.totalWeight)).truncate(18);;
@@ -437,8 +442,6 @@ export function handleExitPool(event: LOG_EXIT): void {
   let newAmount = poolToken.balance.minus(tokenAmountOut)
   poolToken.balance = newAmount
   poolToken.save()
-
-  // log.info(`!!!!!! TEST 3`, [])
 
   // HACK to get rough liquidity. Will update later
   if (address.toString() == WETH) {
