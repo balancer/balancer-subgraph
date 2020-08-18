@@ -16,6 +16,7 @@ type Pool @entity {
     publicSwap: Boolean!                                # isPublicSwap
     finalized: Boolean!                                 # isFinalized
     crp: Boolean!                                       # Is configurable rights pool
+    rights: [String!]!                                  # List of rights (for CRP)
     active: Boolean!                                    # isActive
     swapFee: BigDecimal!                                # Swap Fees
     totalWeight: BigDecimal!

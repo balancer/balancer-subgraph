@@ -18,6 +18,7 @@ import {
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { BToken } from '../types/templates/Pool/BToken'
 import { CRPFactory } from '../types/Factory/CRPFactory'
+import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 
 export let ZERO_BD = BigDecimal.fromString('0')
 
@@ -252,4 +253,18 @@ export function isCrp(address: Address): boolean {
   let isCrp = crpFactory.try_isCrp(address)
   if (isCrp.reverted) return false
   return isCrp.value
+}
+
+export function getRights(address: Address): string[] {
+  let crp = ConfigurableRightsPool.bind(address)
+  let rights = crp.try_rights()
+  if (rights.reverted) return []
+  let rightsArr: string[] = []
+  if (rights.value.value0) rightsArr.push('canPauseSwapping')
+  if (rights.value.value1) rightsArr.push('canChangeSwapFee')
+  if (rights.value.value2) rightsArr.push('canChangeWeights')
+  if (rights.value.value3) rightsArr.push('canAddRemoveTokens')
+  if (rights.value.value4) rightsArr.push('canWhitelistLPs')
+  if (rights.value.value5) rightsArr.push('canChangeCap')
+  return rightsArr
 }
