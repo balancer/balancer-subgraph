@@ -2,7 +2,7 @@ import { BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, Pool } from '../types/schema'
 import { Pool as PoolContract } from '../types/templates'
-import { ZERO_BD } from './helpers'
+import { ZERO_BD, isCrp } from './helpers'
 
 export function handleNewPool(event: LOG_NEW_POOL): void {
   let factory = Balancer.load('1')
@@ -25,6 +25,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.controller = event.params.caller
   pool.publicSwap = false
   pool.finalized = false
+  pool.crp = isCrp(event.params.caller)
   pool.active = true
   pool.swapFee = BigDecimal.fromString('0.000001')
   pool.totalWeight = ZERO_BD

@@ -17,6 +17,7 @@ import {
 } from '../types/schema'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { BToken } from '../types/templates/Pool/BToken'
+import { CRPFactory } from '../types/Factory/CRPFactory'
 
 export let ZERO_BD = BigDecimal.fromString('0')
 
@@ -29,6 +30,10 @@ export let WETH: string = (network == 'mainnet')
 export let USD: string = (network == 'mainnet')
   ? '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' // USDC
   : '0x1528f3fcc26d13f7079325fb78d9442607781c8c' // DAI
+
+export let CRP_FACTORY: string = (network == 'mainnet')
+  ? '0x0000000000000000000000000000000000000000'
+  : '0xb076eaf6dbc8680fd3a11d4a817c177eff0d55d7'
 
 export function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
@@ -240,4 +245,11 @@ export function createUserEntity(address: string): void {
     let user = new User(address)
     user.save()
   }
+}
+
+export function isCrp(address: Address): boolean {
+  let crpFactory = CRPFactory.bind(Address.fromString(CRP_FACTORY))
+  let isCrp = crpFactory.try_isCrp(address)
+  if (isCrp.reverted) return false
+  return isCrp.value
 }
