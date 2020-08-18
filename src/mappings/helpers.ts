@@ -33,7 +33,7 @@ export let USD: string = (network == 'mainnet')
 
 export let CRP_FACTORY: string = (network == 'mainnet')
   ? '0x0000000000000000000000000000000000000000'
-  : '0xb076eaf6dbc8680fd3a11d4a817c177eff0d55d7'
+  : '0xD0282880840f900Bf8dC86A44DaE0E95BF5034AC'
 
 export function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
