@@ -13,13 +13,12 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     factory.color = 'Bronze'
     factory.poolCount = 0
     factory.finalizedPoolCount = 0
+    factory.crpCount = 0
     factory.txCount = BigInt.fromI32(0)
     factory.totalLiquidity = ZERO_BD
     factory.totalSwapVolume = ZERO_BD
     factory.totalSwapFee = ZERO_BD
   }
-  factory.poolCount = factory.poolCount + 1
-  factory.save()
 
   let pool = new Pool(event.params.pool.toHexString())
   pool.controller = event.params.caller
@@ -44,6 +43,10 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.tokensList = []
   pool.tx = event.transaction.hash
   pool.save()
+
+  if (pool.crp) factory.crpCount = factory.crpCount + 1
+  factory.poolCount = factory.poolCount + 1
+  factory.save()
 
   PoolContract.create(event.params.pool)
 }
