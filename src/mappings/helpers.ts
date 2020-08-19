@@ -255,6 +255,13 @@ export function isCrp(address: Address): boolean {
   return isCrp.value
 }
 
+export function getCrpSymbol(address: Address): string {
+  let crp = ConfigurableRightsPool.bind(address)
+  let symbol = crp.try_symbol()
+  if (symbol.reverted) return ''
+  return symbol.value
+}
+
 export function getRights(address: Address): string[] {
   let crp = ConfigurableRightsPool.bind(address)
   let rights = crp.try_rights()
