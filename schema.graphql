@@ -18,7 +18,7 @@ type Pool @entity {
     finalized: Boolean!                                 # isFinalized
     crp: Boolean!                                       # Is configurable rights pool
     crpController: Bytes                                # CRP controller address
-    symbol: String!                                     # Pool token symbol
+    symbol: String                                      # Pool token symbol
     name: String                                        # Pool token name
     rights: [String!]!                                  # List of rights (for CRP)
     active: Boolean!                                    # isActive

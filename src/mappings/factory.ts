@@ -23,7 +23,6 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
 
   let pool = new Pool(event.params.pool.toHexString())
   pool.crp = isCrp(event.params.caller)
-  pool.symbol = 'BPT'
   pool.rights = []
   if (pool.crp) {
     let crp = ConfigurableRightsPool.bind(event.params.caller)
