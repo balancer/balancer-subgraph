@@ -2,7 +2,15 @@ import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, Pool } from '../types/schema'
 import { Pool as PoolContract } from '../types/templates'
-import { ZERO_BD, isCrp, getCrpController, getCrpSymbol, getCrpName, getCrpRights } from './helpers'
+import {
+  ZERO_BD,
+  isCrp,
+  getCrpController,
+  getCrpSymbol,
+  getCrpName,
+  getCrpRights,
+  getCrpCap
+} from './helpers'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool';
 
 export function handleNewPool(event: LOG_NEW_POOL): void {
@@ -30,6 +38,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     pool.name = getCrpName(crp)
     pool.crpController = Address.fromString(getCrpController(crp))
     pool.rights = getCrpRights(crp)
+    pool.cap = getCrpCap(crp)
   }
   pool.controller = event.params.caller
   pool.publicSwap = false

@@ -21,6 +21,7 @@ type Pool @entity {
     symbol: String                                      # Pool token symbol
     name: String                                        # Pool token name
     rights: [String!]!                                  # List of rights (for CRP)
+    cap: BigInt                                         # Maximum supply if any (for CRP)
     active: Boolean!                                    # isActive
     swapFee: BigDecimal!                                # Swap Fees
     totalWeight: BigDecimal!

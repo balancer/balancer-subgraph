@@ -273,6 +273,12 @@ export function getCrpName(crp: ConfigurableRightsPool): string {
   return name.value
 }
 
+export function getCrpCap(crp: ConfigurableRightsPool): BigInt {
+  let cap = crp.try_getCap()
+  if (cap.reverted) return BigInt.fromI32(0)
+  return cap.value
+}
+
 export function getCrpRights(crp: ConfigurableRightsPool): string[] {
   let rights = crp.try_rights()
   if (rights.reverted) return []
