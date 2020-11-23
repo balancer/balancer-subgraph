@@ -41,6 +41,21 @@ type Pool @entity {
     factoryID: Balancer!
     tx: Bytes                                           # Pool creation transaction id
     swaps: [Swap!] @derivedFrom(field: "poolAddress")
+    dayData: [PoolDayData!] @derivedFrom(field: "pool")
+}
+
+type PoolDayData @entity {
+    id: ID! # poolAddress-dayId
+    pool: Pool!
+    date: Int!
+    tokens: [PoolTokenDayData!] @derivedFrom(field: "poolDayDataId")
+}
+
+type PoolTokenDayData @entity {
+    id: ID! # PoolDayData-token
+    poolDayDataId: PoolDayData!
+    dayBalance: BigDecimal!
+    token: PoolToken!
 }
 
 type PoolToken @entity {

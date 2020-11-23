@@ -1,4 +1,4 @@
-import { BigInt, Address, Bytes, store } from '@graphprotocol/graph-ts'
+import { BigInt, Address, Bytes, store, ethereum } from '@graphprotocol/graph-ts'
 import { LOG_CALL, LOG_JOIN, LOG_EXIT, LOG_SWAP, Transfer, GulpCall } from '../types/templates/Pool/Pool'
 import { Pool as BPool } from '../types/templates/Pool/Pool'
 import {
@@ -7,7 +7,9 @@ import {
   PoolToken,
   PoolShare,
   Swap,
-  TokenPrice
+  TokenPrice,
+  PoolDayData,
+  PoolTokenDayData
 } from '../types/schema'
 import {
   hexToDecimal,
@@ -225,6 +227,8 @@ export function handleExitPool(event: LOG_EXIT): void {
 export function handleSwap(event: LOG_SWAP): void {
   let poolId = event.address.toHex()
 
+  const poolDayData = dailyPoolUpdate(event);
+
   let tokenIn = event.params.tokenIn.toHex()
   let poolTokenInId = poolId.concat('-').concat(tokenIn.toString())
   let poolTokenIn = PoolToken.load(poolTokenInId)
@@ -233,6 +237,16 @@ export function handleSwap(event: LOG_SWAP): void {
   poolTokenIn.balance = newAmountIn
   poolTokenIn.save()
 
+  const poolTokenInDayData = PoolTokenDayData.load(
+    poolDayData.id 
+    .concat('-')
+    .concat(poolTokenInId)
+  )
+  poolTokenInDayData.dayBalance.plus(
+    newAmountIn
+  )
+  poolTokenInDayData.save()
+
   let tokenOut = event.params.tokenOut.toHex()
   let poolTokenOutId = poolId.concat('-').concat(tokenOut.toString())
   let poolTokenOut = PoolToken.load(poolTokenOutId)
@@ -240,6 +254,16 @@ export function handleSwap(event: LOG_SWAP): void {
   let newAmountOut = poolTokenOut.balance.minus(tokenAmountOut)
   poolTokenOut.balance = newAmountOut
   poolTokenOut.save()
+
+  const poolTokenOutDayData = PoolTokenDayData.load(
+    poolDayData.id 
+    .concat('-')
+    .concat(poolTokenOutId)
+  )
+  poolTokenOutDayData.dayBalance.plus(
+    newAmountOut
+  )
+  poolTokenOutDayData.save();
 
   updatePoolLiquidity(poolId)
 
@@ -392,4 +416,40 @@ export function handleSwap(event: LOG_SWAP): void {
   }
 
   pool.save()
+}
+
+function dailyPoolUpdate(event: ethereum.Event): PoolDayData {
+  const poolId = event.address.toHexString();
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  const poolDayId = poolId
+    .concat('-')
+    .concat(BigInt.fromI32(dayID).toString())
+  let poolDayData = PoolDayData.load(poolDayId)
+  let pool = Pool.load(poolId);
+
+  if (poolDayData === null) {
+    poolDayData = new PoolDayData(poolDayId)
+    poolDayData.date = dayStartTimestamp
+    poolDayData.pool = pool.id
+
+    let tokensList: Array<Bytes> = pool.tokensList
+    for (let i: i32 = 0; i < tokensList.length; i++) {
+      const token: string = tokensList[i].toHexString()
+      const poolTokenDayData = new PoolTokenDayData(
+        poolDayData.id
+        .concat('-')
+        .concat(token.toString())
+      )
+      poolTokenDayData.poolDayDataId = poolDayData.id
+      poolTokenDayData.token = poolId.concat('-').concat(token.toString());
+      poolTokenDayData.dayBalance = ZERO_BD
+      poolTokenDayData.save()
+    }
+  }
+
+  poolDayData.save()
+
+  return poolDayData as PoolDayData;
 }
