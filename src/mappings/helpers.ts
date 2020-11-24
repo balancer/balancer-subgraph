@@ -30,7 +30,11 @@ export let WETH: string = (network == 'mainnet')
 
 export let USD: string = (network == 'mainnet')
   ? '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' // USDC
-  : '0x1528f3fcc26d13f7079325fb78d9442607781c8c' // DAI
+  : '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5' // USDC
+
+export let DAI: string = (network == 'mainnet')
+    ? '0x6b175474e89094c44da98b954eedeac495271d0f'
+    : '0x1528f3fcc26d13f7079325fb78d9442607781c8c'
 
 export let CRP_FACTORY: string = (network == 'mainnet')
   ? '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
@@ -158,6 +162,14 @@ export function updatePoolLiquidity(id: string): void {
       poolLiquidity = wethTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
       hasPrice = true
     }
+  } else if (tokensList.includes(Address.fromString(DAI))) {
+    let daiTokenPrice = TokenPrice.load(DAI)
+    if (daiTokenPrice !== null) {
+      let poolTokenId = id.concat('-').concat(DAI)
+      let poolToken = PoolToken.load(poolTokenId)
+      poolLiquidity = daiTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+      hasPrice = true
+    }
   }
 
   // Create or update token price
@@ -177,7 +189,10 @@ export function updatePoolLiquidity(id: string): void {
 
       if (
         (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity)) &&
-        (tokenPriceId != WETH.toString() || (pool.tokensCount.equals(BigInt.fromI32(2)) && hasUsdPrice))
+        (
+          (tokenPriceId != WETH.toString() && tokenPriceId != DAI.toString()) ||
+          (pool.tokensCount.equals(BigInt.fromI32(2)) && hasUsdPrice)
+        )
       ) {
         tokenPrice.price = ZERO_BD
 
