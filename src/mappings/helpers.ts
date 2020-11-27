@@ -236,7 +236,8 @@ export function updatePoolLiquidity(id: string): void {
   pool.save()
 }
 
-export function decrPoolCount(finalized: boolean, crp: boolean): void {
+export function decrPoolCount(active: boolean, finalized: boolean, crp: boolean): void {
+  if (!active) return;
   let factory = Balancer.load('1')
   factory.poolCount -= 1
   if (finalized) factory.finalizedPoolCount -= 1
