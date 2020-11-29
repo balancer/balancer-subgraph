@@ -237,12 +237,13 @@ export function updatePoolLiquidity(id: string): void {
 }
 
 export function decrPoolCount(active: boolean, finalized: boolean, crp: boolean): void {
-  if (!active) return;
-  let factory = Balancer.load('1')
-  factory.poolCount -= 1
-  if (finalized) factory.finalizedPoolCount -= 1
-  if (crp) factory.crpCount -= 1
-  factory.save()
+  if (active) {
+    let factory = Balancer.load('1')
+    factory.poolCount = factory.poolCount - 1
+    if (finalized) factory.finalizedPoolCount = factory.finalizedPoolCount - 1
+    if (crp) factory.crpCount = factory.crpCount - 1
+    factory.save()
+  }
 }
 
 export function saveTransaction(event: ethereum.Event, eventName: string): void {
