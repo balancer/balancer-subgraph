@@ -119,7 +119,7 @@ export function handleRebind(event: LOG_CALL): void {
   poolToken.save()
 
   if (balance.equals(ZERO_BD)) {
-    decrPoolCount(pool.finalized, pool.crp)
+    decrPoolCount(pool.active, pool.finalized, pool.crp)
     pool.active = false
   }
   pool.save()
@@ -209,7 +209,7 @@ export function handleExitPool(event: LOG_EXIT): void {
   let pool = Pool.load(poolId)
   pool.exitsCount += BigInt.fromI32(1)
   if (newAmount.equals(ZERO_BD)) {
-    decrPoolCount(pool.finalized, pool.crp)
+    decrPoolCount(pool.active, pool.finalized, pool.crp)
     pool.active = false
   }
   pool.save()
@@ -296,7 +296,7 @@ export function handleSwap(event: LOG_SWAP): void {
   }
   pool.swapsCount += BigInt.fromI32(1)
   if (newAmountIn.equals(ZERO_BD) || newAmountOut.equals(ZERO_BD)) {
-    decrPoolCount(pool.finalized, pool.crp)
+    decrPoolCount(pool.active, pool.finalized, pool.crp)
     pool.active = false
   }
   pool.save()
