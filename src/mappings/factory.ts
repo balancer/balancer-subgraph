@@ -9,7 +9,7 @@ import {
   getCrpSymbol,
   getCrpName,
   getCrpRights,
-  getCrpCap,
+  getCrpCap
 } from './helpers'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 

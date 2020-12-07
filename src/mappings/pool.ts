@@ -5,7 +5,7 @@ import {
   LOG_EXIT,
   LOG_SWAP,
   Transfer,
-  GulpCall,
+  GulpCall
 } from '../types/templates/Pool/Pool'
 import { Pool as BPool } from '../types/templates/Pool/Pool'
 import { Balancer, Pool, PoolToken, PoolShare, Swap, TokenPrice } from '../types/schema'
@@ -18,7 +18,7 @@ import {
   updatePoolLiquidity,
   saveTransaction,
   ZERO_BD,
-  decrPoolCount,
+  decrPoolCount
 } from './helpers'
 
 /************************************
@@ -202,7 +202,7 @@ export function handleExitPool(event: LOG_EXIT): void {
   let poolToken = PoolToken.load(poolTokenId)
   let tokenAmountOut = tokenToDecimal(
     event.params.tokenAmountOut.toBigDecimal(),
-    poolToken.decimals,
+    poolToken.decimals
   )
   let newAmount = poolToken.balance.minus(tokenAmountOut)
   poolToken.balance = newAmount
@@ -232,7 +232,7 @@ export function handleSwap(event: LOG_SWAP): void {
   let poolTokenIn = PoolToken.load(poolTokenInId)
   let tokenAmountIn = tokenToDecimal(
     event.params.tokenAmountIn.toBigDecimal(),
-    poolTokenIn.decimals,
+    poolTokenIn.decimals
   )
   let newAmountIn = poolTokenIn.balance.plus(tokenAmountIn)
   poolTokenIn.balance = newAmountIn
@@ -243,7 +243,7 @@ export function handleSwap(event: LOG_SWAP): void {
   let poolTokenOut = PoolToken.load(poolTokenOutId)
   let tokenAmountOut = tokenToDecimal(
     event.params.tokenAmountOut.toBigDecimal(),
-    poolTokenOut.decimals,
+    poolTokenOut.decimals
   )
   let newAmountOut = poolTokenOut.balance.minus(tokenAmountOut)
   poolTokenOut.balance = newAmountOut
