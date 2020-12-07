@@ -24,21 +24,25 @@ export let ZERO_BD = BigDecimal.fromString('0')
 
 let network = dataSource.network()
 
-export let WETH: string = (network == 'mainnet')
-  ? '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-  : '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
+// Config for mainnet
+let WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+let USD = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
+let CRP_FACTORY = '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
 
-export let USD: string = (network == 'mainnet')
-  ? '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' // USDC
-  : '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5' // USDC
+if (network == 'kovan') {
+  WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
+  USD = '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5'
+  DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c'
+  CRP_FACTORY = '0x53265f0e014995363AE54DAd7059c018BaDbcD74'
+}
 
-export let DAI: string = (network == 'mainnet')
-    ? '0x6b175474e89094c44da98b954eedeac495271d0f'
-    : '0x1528f3fcc26d13f7079325fb78d9442607781c8c'
-
-export let CRP_FACTORY: string = (network == 'mainnet')
-  ? '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
-  : '0x53265f0e014995363AE54DAd7059c018BaDbcD74'
+if (network == 'rinkeby') {
+  WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
+  USD = '0x21f3179cadae46509f615428f639e38123a508ac'
+  DAI = '0x947b4082324af403047154f9f26f14538d775194'
+  CRP_FACTORY = '0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4'
+}
 
 export function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
