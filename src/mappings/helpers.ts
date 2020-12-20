@@ -225,7 +225,7 @@ export function updatePoolLiquidity(id: string): void {
     if (tokenPrice !== null) {
       let poolTokenId = id.concat('-').concat(tokenPriceId)
       let poolToken = PoolToken.load(poolTokenId)
-      if (poolToken.denormWeight.gt(denormWeight)) {
+      if (tokenPrice.price.gt(ZERO_BD) && poolToken.denormWeight.gt(denormWeight)) {
         denormWeight = poolToken.denormWeight
         liquidity = tokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
       }
