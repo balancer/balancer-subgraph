@@ -192,6 +192,7 @@ export function updatePoolLiquidity(id: string): void {
       let poolToken = PoolToken.load(poolTokenId)
 
       if (
+        pool.active && pool.tokensCount.notEqual(BigInt.fromI32(0)) &&
         (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity)) &&
         (
           (tokenPriceId != WETH.toString() && tokenPriceId != DAI.toString()) ||
