@@ -290,14 +290,14 @@ export function handleSwap(event: LOG_SWAP): void {
 
     factory.totalSwapVolume = factory.totalSwapVolume.plus(swapValue)
     factory.totalSwapFee = factory.totalSwapFee.plus(swapFeeValue)
-    factory.save()
 
     pool.totalSwapVolume = totalSwapVolume
     pool.totalSwapFee = totalSwapFee
   }
 
-  factory.txCount += BigInt.fromI32(1)
   pool.swapsCount += BigInt.fromI32(1)
+  factory.txCount += BigInt.fromI32(1)
+  factory.save()
 
   if (newAmountIn.equals(ZERO_BD) || newAmountOut.equals(ZERO_BD)) {
     decrPoolCount(pool.active, pool.finalized, pool.crp)
