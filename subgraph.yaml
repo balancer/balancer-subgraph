@@ -83,3 +83,21 @@ templates:
       callHandlers:
         - function: gulp(address)
           handler: handleGulp
+  - kind: ethereum/contract
+    name: CrpController
+    network: mainnet
+    source:
+      abi: ConfigurableRightsPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/pool.ts
+      entities:
+        - Pool
+      abis:
+        - name: ConfigurableRightsPool
+          file: ./abis/ConfigurableRightsPool.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleSetCrpController
