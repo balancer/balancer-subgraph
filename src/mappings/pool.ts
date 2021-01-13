@@ -16,10 +16,12 @@ import {
   createPoolShareEntity,
   createPoolTokenEntity,
   updatePoolLiquidity,
+  getCrpUnderlyingPool,
   saveTransaction,
   ZERO_BD,
   decrPoolCount
 } from './helpers'
+import { ConfigurableRightsPool, OwnershipTransferred } from '../types/Factory/ConfigurableRightsPool'
 
 /************************************
  ********** Pool Controls ***********
@@ -44,6 +46,19 @@ export function handleSetController(event: LOG_CALL): void {
 
   saveTransaction(event, 'setController')
 }
+
+export function handleSetCrpController(event: OwnershipTransferred): void {
+  // This event occurs on the CRP contract rather than the underlying pool so we must perform a lookup.
+  let crp = ConfigurableRightsPool.bind(event.address)
+  let pool = Pool.load(getCrpUnderlyingPool(crp))
+  pool.crpController = event.params.newOwner
+  pool.save()
+
+  // We overwrite event address so that ownership transfers can be linked to Pool entities for above reason.
+  event.address = Address.fromString(pool.id)
+  saveTransaction(event, 'setCrpController')
+}
+
 
 export function handleSetPublicSwap(event: LOG_CALL): void {
   let poolId = event.address.toHex()

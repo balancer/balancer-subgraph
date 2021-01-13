@@ -44,7 +44,7 @@ if (network == 'rinkeby') {
   CRP_FACTORY = '0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4'
 }
 
-export function hexToDecimal(hexString: String, decimals: i32): BigDecimal {
+export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
   let bi = BigInt.fromUnsignedBytes(bytes)
   let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
@@ -283,6 +283,12 @@ export function isCrp(address: Address): boolean {
   let isCrp = crpFactory.try_isCrp(address)
   if (isCrp.reverted) return false
   return isCrp.value
+}
+
+export function getCrpUnderlyingPool(crp: ConfigurableRightsPool): string | null {
+  let bPool = crp.try_bPool()
+  if (bPool.reverted) return null;
+  return bPool.value.toHexString()
 }
 
 export function getCrpController(crp: ConfigurableRightsPool): string | null {
