@@ -294,6 +294,7 @@ export function handleSwap(event: LOG_SWAP): void {
   let liquidity = pool.liquidity
   let swapValue = ZERO_BD
   let swapFeeValue = ZERO_BD
+  let factory = Balancer.load('1')
 
   if (tokenOutPriceValue.gt(ZERO_BD)) {
     swapValue = tokenOutPriceValue.times(tokenAmountOut)
@@ -301,15 +302,18 @@ export function handleSwap(event: LOG_SWAP): void {
     totalSwapVolume = totalSwapVolume.plus(swapValue)
     totalSwapFee = totalSwapFee.plus(swapFeeValue)
 
-    let factory = Balancer.load('1')
+
     factory.totalSwapVolume = factory.totalSwapVolume.plus(swapValue)
     factory.totalSwapFee = factory.totalSwapFee.plus(swapFeeValue)
-    factory.save()
 
     pool.totalSwapVolume = totalSwapVolume
     pool.totalSwapFee = totalSwapFee
   }
+
   pool.swapsCount += BigInt.fromI32(1)
+  factory.txCount += BigInt.fromI32(1)
+  factory.save()
+
   if (newAmountIn.equals(ZERO_BD) || newAmountOut.equals(ZERO_BD)) {
     decrPoolCount(pool.active, pool.finalized, pool.crp)
     pool.active = false
