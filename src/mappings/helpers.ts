@@ -144,6 +144,12 @@ export function updatePoolLiquidity(id: string): void {
   let pool = Pool.load(id)
   let tokensList: Array<Bytes> = pool.tokensList
 
+  if (pool.tokensCount.equals(BigInt.fromI32(0))) {
+    pool.liquidity = ZERO_BD
+    pool.save()
+    return
+  }
+
   if (!tokensList || pool.tokensCount.lt(BigInt.fromI32(2)) || !pool.publicSwap) return
 
   // Find pool liquidity
