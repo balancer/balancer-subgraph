@@ -161,6 +161,7 @@ export function handleUnbind(event: LOG_CALL): void {
   pool.save()
   store.remove('PoolToken', poolTokenId)
 
+  updatePoolLiquidity(poolId)
   saveTransaction(event, 'unbind')
 }
 
