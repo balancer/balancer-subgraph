@@ -1,7 +1,7 @@
 import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, Pool } from '../types/schema'
-import { Pool as PoolContract, CrpController as CrpControllerContract } from '../types/templates'
+import { Pool as PoolContract } from '../types/templates'
 import {
   ZERO_BD,
   isCrp,
@@ -40,9 +40,6 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     pool.crpController = Address.fromString(getCrpController(crp))
     pool.rights = getCrpRights(crp)
     pool.cap = getCrpCap(crp)
-
-    // Listen for any future crpController changes.
-    CrpControllerContract.create(event.params.caller)
   }
   pool.controller = event.params.caller
   pool.publicSwap = false
