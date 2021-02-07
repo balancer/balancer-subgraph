@@ -11,7 +11,7 @@ import {
   getCrpRights,
   getCrpCap
 } from './helpers'
-import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool';
+import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 
 export function handleNewPool(event: LOG_NEW_POOL): void {
   let factory = Balancer.load('1')

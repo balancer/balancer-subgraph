@@ -1,11 +1,4 @@
-import {
-  BigDecimal,
-  Address,
-  BigInt,
-  Bytes,
-  dataSource,
-  ethereum
-} from '@graphprotocol/graph-ts'
+import { BigDecimal, Address, BigInt, Bytes, dataSource, ethereum } from '@graphprotocol/graph-ts'
 import {
   Pool,
   User,
@@ -47,17 +40,23 @@ if (network == 'rinkeby') {
 export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
   let bi = BigInt.fromUnsignedBytes(bytes)
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return bi.divDecimal(scale)
 }
 
 export function bigIntToDecimal(amount: BigInt, decimals: i32): BigDecimal {
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return amount.toBigDecimal().div(scale)
 }
 
 export function tokenToDecimal(amount: BigDecimal, decimals: i32): BigDecimal {
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return amount.div(scale)
 }
 
@@ -169,7 +168,10 @@ export function updatePoolLiquidity(id: string): void {
     if (wethTokenPrice !== null) {
       let poolTokenId = id.concat('-').concat(WETH)
       let poolToken = PoolToken.load(poolTokenId)
-      poolLiquidity = wethTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+      poolLiquidity = wethTokenPrice.price
+        .times(poolToken.balance)
+        .div(poolToken.denormWeight)
+        .times(pool.totalWeight)
       hasPrice = true
     }
   } else if (tokensList.includes(Address.fromString(DAI))) {
@@ -177,7 +179,10 @@ export function updatePoolLiquidity(id: string): void {
     if (daiTokenPrice !== null) {
       let poolTokenId = id.concat('-').concat(DAI)
       let poolToken = PoolToken.load(poolTokenId)
-      poolLiquidity = daiTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+      poolLiquidity = daiTokenPrice.price
+        .times(poolToken.balance)
+        .div(poolToken.denormWeight)
+        .times(pool.totalWeight)
       hasPrice = true
     }
   }
@@ -200,15 +205,16 @@ export function updatePoolLiquidity(id: string): void {
       if (
         pool.active && !pool.crp && pool.tokensCount.notEqual(BigInt.fromI32(0)) && pool.publicSwap &&
         (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity)) &&
-        (
-          (tokenPriceId != WETH.toString() && tokenPriceId != DAI.toString()) ||
-          (pool.tokensCount.equals(BigInt.fromI32(2)) && hasUsdPrice)
-        )
+        ((tokenPriceId != WETH.toString() && tokenPriceId != DAI.toString()) ||
+          (pool.tokensCount.equals(BigInt.fromI32(2)) && hasUsdPrice))
       ) {
         tokenPrice.price = ZERO_BD
 
         if (poolToken.balance.gt(ZERO_BD)) {
-          tokenPrice.price = poolLiquidity.div(pool.totalWeight).times(poolToken.denormWeight).div(poolToken.balance)
+          tokenPrice.price = poolLiquidity
+            .div(pool.totalWeight)
+            .times(poolToken.denormWeight)
+            .div(poolToken.balance)
         }
 
         tokenPrice.symbol = poolToken.symbol
@@ -234,7 +240,10 @@ export function updatePoolLiquidity(id: string): void {
       let poolToken = PoolToken.load(poolTokenId)
       if (tokenPrice.price.gt(ZERO_BD) && poolToken.denormWeight.gt(denormWeight)) {
         denormWeight = poolToken.denormWeight
-        liquidity = tokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+        liquidity = tokenPrice.price
+          .times(poolToken.balance)
+          .div(poolToken.denormWeight)
+          .times(pool.totalWeight)
       }
     }
   }
@@ -299,7 +308,7 @@ export function getCrpUnderlyingPool(crp: ConfigurableRightsPool): string | null
 
 export function getCrpController(crp: ConfigurableRightsPool): string | null {
   let controller = crp.try_getController()
-  if (controller.reverted) return null;
+  if (controller.reverted) return null
   return controller.value.toHexString()
 }
 
