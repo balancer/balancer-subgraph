@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: rinkeby
     source:
-      address: "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd"
+      address: "0x9C84391B443ea3a48788079a5f98e2EaD55c9309"
       abi: Factory
-      startBlock: 9562480
+      startBlock: 6881181
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -31,7 +31,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: mainnet
+    network: rinkeby
     source:
       abi: Pool
     mapping:
@@ -80,12 +80,9 @@ templates:
           handler: handleSwap
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      callHandlers:
-        - function: gulp(address)
-          handler: handleGulp
   - kind: ethereum/contract
     name: CrpController
-    network: mainnet
+    network: rinkeby
     source:
       abi: ConfigurableRightsPool
     mapping:
