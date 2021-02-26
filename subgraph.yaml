@@ -28,6 +28,26 @@ dataSources:
       eventHandlers:
         - event: LOG_NEW_POOL(indexed address,indexed address)
           handler: handleNewPool
+  - kind: ethereum/contract
+    name: XTokenWrapper
+    network: rinkeby
+    source:
+      address: "0x059d46db89aE72262C04A414dDc3Af04f769f599"
+      abi: XTokenWrapper
+      startBlock: 8130948
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/xtokenwrapper.ts
+      entities:
+        - Token
+      abis:
+        - name: XTokenWrapper
+          file: ./abis/XTokenWrapper.json
+      eventHandlers:
+        - event: RegisterToken(indexed address,indexed address)
+          handler: handleRegisterToken
 templates:
   - kind: ethereum/contract
     name: Pool

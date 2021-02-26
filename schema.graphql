@@ -119,3 +119,13 @@ enum SwapType {
     exitswapPoolAmountIn,
     exitswapExternAmountOut
 }
+
+type Token @entity {
+    id: ID!
+    xToken: XToken!
+}
+
+type XToken @entity {
+    id: ID!
+    token: Token
+}
