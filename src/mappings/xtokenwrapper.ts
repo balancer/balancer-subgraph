@@ -15,7 +15,6 @@ export function handleRegisterToken(event: RegisterToken): void {
     if (xToken == null) {
         xToken = new XToken(xTokenId)
     }
-    token.xToken = xTokenId
     xToken.token = tokenId
 
     token.save()

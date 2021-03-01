@@ -122,10 +122,10 @@ enum SwapType {
 
 type Token @entity {
     id: ID!
-    xToken: XToken!
+    xToken: XToken! @derivedFrom(field: "token")
 }
 
 type XToken @entity {
     id: ID!
-    token: Token
+    token: Token! 
 }

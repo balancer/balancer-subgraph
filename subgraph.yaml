@@ -32,7 +32,7 @@ dataSources:
     name: XTokenWrapper
     network: rinkeby
     source:
-      address: "0x059d46db89aE72262C04A414dDc3Af04f769f599"
+      address: "0x90C03d137CF785985D9eB3C1bd78A66e16b6A3C6"
       abi: XTokenWrapper
       startBlock: 8130948
     mapping:
