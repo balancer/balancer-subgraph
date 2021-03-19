@@ -8,7 +8,7 @@ dataSources:
     name: Factory
     network: kovan
     source:
-      address: "0xb87F39A3277017a2Db70CF523Ca411A28b8f57d4"
+      address: "0xf748A54bB6b9950Fc7D0aB26E27fE5eAb349EDD3"
       abi: Factory
       startBlock: 23944937
     mapping:
@@ -32,7 +32,7 @@ dataSources:
     name: XTokenWrapper
     network: kovan
     source:
-      address: "0x0C378f7C0982c3A0B0875b858D2008F438325C8d"
+      address: "0x3fd5470359A59D0d245a6658dAa875772A014535"
       abi: XTokenWrapper
       startBlock: 23945005
     mapping:
@@ -45,15 +45,13 @@ dataSources:
       abis:
         - name: XTokenWrapper
           file: ./abis/XTokenWrapper.json
-        - name: ERC20
-          file: ./abis/ERC20.json
       eventHandlers:
         - event: RegisterToken(indexed address,indexed address)
           handler: handleRegisterToken
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: kovan
+    network: rinkeby
     source:
       abi: Pool
     mapping:
@@ -104,7 +102,7 @@ templates:
           handler: handleTransfer
   - kind: ethereum/contract
     name: CrpController
-    network: kovan
+    network: rinkeby
     source:
       abi: ConfigurableRightsPool
     mapping:
