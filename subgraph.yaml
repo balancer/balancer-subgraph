@@ -8,9 +8,9 @@ dataSources:
     name: Factory
     network: kovan
     source:
-      address: "0xb87F39A3277017a2Db70CF523Ca411A28b8f57d4"
+      address: "0xd73969Ba8aB79Fc3b4c70616671F65E5cA84C741"
       abi: Factory
-      startBlock: 23944937
+      startBlock: 23989102
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -32,9 +32,9 @@ dataSources:
     name: XTokenWrapper
     network: kovan
     source:
-      address: "0x0C378f7C0982c3A0B0875b858D2008F438325C8d"
+      address: "0xEdC09741A698460784Bc62E3A4AfB751503Ed3ab"
       abi: XTokenWrapper
-      startBlock: 23945005
+      startBlock: 23989257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -120,3 +120,23 @@ templates:
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleSetCrpController
+  - kind: ethereum/contract
+    name: XToken
+    network: kovan
+    source:
+      abi: XToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/xtokenwrapper.ts
+      entities:
+        - XToken
+      abis:
+        - name: XToken
+          file: ./abis/XToken.json
+      eventHandlers:
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused

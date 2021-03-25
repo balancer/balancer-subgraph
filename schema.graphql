@@ -134,4 +134,5 @@ type XToken @entity {
     name: String
     symbol: String
     decimals: Int
+    paused: Boolean
 }
