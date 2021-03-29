@@ -1,7 +1,7 @@
 import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
-import { Balancer, Pool } from '../types/schema'
-import { Pool as PoolContract, CrpController as CrpControllerContract } from '../types/templates'
+import { Balancer, Pool, CrpControllerPoolCount} from '../types/schema'
+import { Pool as PoolContract, CrpController as CrpControllerContract, CrpController } from '../types/templates'
 import {
   ZERO_BD,
   isCrp,
@@ -23,6 +23,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     factory.poolCount = 0
     factory.finalizedPoolCount = 0
     factory.crpCount = 0
+    factory.privateCount = 0
     factory.txCount = BigInt.fromI32(0)
     factory.totalLiquidity = ZERO_BD
     factory.totalSwapVolume = ZERO_BD
@@ -40,6 +41,8 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     pool.crpController = Address.fromString(getCrpController(crp))
     pool.rights = getCrpRights(crp)
     pool.cap = getCrpCap(crp)
+
+    countCrpController(pool.crpController.toHexString())
 
     // Listen for any future crpController changes.
     CrpControllerContract.create(event.params.caller)
@@ -69,4 +72,19 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   factory.save()
 
   PoolContract.create(event.params.pool)
+}
+
+function countCrpController(crpController: string): void {
+  let controllerCount =  CrpControllerPoolCount.load(crpController)
+
+  if (controllerCount == null) {
+    controllerCount = new CrpControllerPoolCount(crpController)
+    controllerCount.poolCount = 1
+    controllerCount.factoryID = '1'
+  } else {
+    controllerCount.poolCount = controllerCount.poolCount + 1
+  }
+
+  controllerCount.save()
+
 }

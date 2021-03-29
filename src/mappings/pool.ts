@@ -93,6 +93,7 @@ export function handleFinalize(event: LOG_CALL): void {
 
   let factory = Balancer.load('1')
   factory.finalizedPoolCount = factory.finalizedPoolCount + 1
+  if (pool.crp) factory.privateCount = factory.privateCount + 1
   factory.save()
 
   saveTransaction(event, 'finalize')
