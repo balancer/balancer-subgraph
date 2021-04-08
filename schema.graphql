@@ -58,6 +58,7 @@ type PoolToken @entity {
     name: String
     decimals: Int!
     address: String!
+    xToken: XToken
     balance: BigDecimal!
     denormWeight: BigDecimal!
 }
@@ -143,4 +144,5 @@ type XToken @entity {
     symbol: String
     decimals: Int
     paused: Boolean
+    poolToken: PoolToken @derivedFrom(field: "xToken")
 }

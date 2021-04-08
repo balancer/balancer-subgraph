@@ -132,6 +132,7 @@ export function createPoolTokenEntity(id: string, pool: string, address: string)
   let poolToken = new PoolToken(id)
   poolToken.poolId = pool
   poolToken.address = address
+  poolToken.xToken = address
   poolToken.name = name
   poolToken.symbol = symbol
   poolToken.decimals = decimals
