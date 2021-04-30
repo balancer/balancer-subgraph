@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: kovan
+    network: rinkeby 
     source:
-      address: "0xd73969Ba8aB79Fc3b4c70616671F65E5cA84C741"
+      address: "0x16ba6ae270b644f85f03de3a518370b03a993885"
       abi: Factory
-      startBlock: 23989102
+      startBlock: 8503999
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -30,11 +30,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: XTokenWrapper
-    network: kovan
+    network: rinkeby
     source:
-      address: "0xEdC09741A698460784Bc62E3A4AfB751503Ed3ab"
+      address: "0x2207F2a0c8EA6ffE43132e1a09aA22574cBf0E48"
       abi: XTokenWrapper
-      startBlock: 23989257
+      startBlock: 8505009
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -53,7 +53,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: kovan
+    network: rinkeby
     source:
       abi: Pool
     mapping:
@@ -104,7 +104,7 @@ templates:
           handler: handleTransfer
   - kind: ethereum/contract
     name: CrpController
-    network: kovan
+    network: rinkeby
     source:
       abi: ConfigurableRightsPool
     mapping:
@@ -122,7 +122,7 @@ templates:
           handler: handleSetCrpController
   - kind: ethereum/contract
     name: XToken
-    network: kovan
+    network: rinkeby
     source:
       abi: XToken
     mapping:

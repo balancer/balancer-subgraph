@@ -5,8 +5,8 @@
     "create:local": "graph create protofire/swarm-markets-rinkeby --node http://127.0.0.1:8020",
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "deploy": "graph deploy protofire/swarm-markets-kovan --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy:local": "graph deploy protofire/swarm-markets-kovan subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "deploy": "graph deploy protofire/swarm-markets-rinkeby --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy:local": "graph deploy protofire/swarm-markets-rinkeby subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.18.0",
