@@ -131,7 +131,7 @@ enum SwapType {
 
 type Token @entity {
     id: ID!
-    xToken: XToken! @derivedFrom(field: "token")
+    xToken: XToken! 
     name: String
     symbol: String
     decimals: Int
@@ -139,7 +139,7 @@ type Token @entity {
 
 type XToken @entity {
     id: ID!
-    token: Token! 
+    token: Token @derivedFrom(field: "xToken")
     name: String
     symbol: String
     decimals: Int

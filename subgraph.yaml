@@ -1,6 +1,6 @@
 specVersion: 0.0.2
-description: Balancer is a non-custodial portfolio manager, liquidity provider, and price sensor.
-repository: https://github.com/balancer-labs/balancer-subgraph
+description: Swarm Network provides open technology to enable the creation and management of digital assets.
+repository: https://github.com/Altoros/swarm-markets-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
