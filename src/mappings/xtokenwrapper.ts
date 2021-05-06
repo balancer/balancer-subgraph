@@ -16,7 +16,14 @@ export function handleRegisterToken(event: RegisterToken): void {
     let token = Token.load(tokenId)
     let xToken = XToken.load(xTokenId)
 
-    if (token == null) {
+    // clearing previous reference to avoid one-to-many error
+    if (token != null) {
+        if(xToken == null) {
+            let prevXToken = XToken.load(token.xToken)
+            prevXToken.token = null
+        }
+    } else {
+    //if (token == null) {
         token = new Token(tokenId)
         let erc20Token = ERC20.bind(tokenIdAddress)
         let tokenDecimals = erc20Token.try_decimals()
