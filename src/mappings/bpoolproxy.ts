@@ -9,6 +9,7 @@ import {
 
 import {
     createPoolShareEntity, 
+    tokenToDecimal,
     ZERO_BD 
 } from './helpers'
 
@@ -30,7 +31,7 @@ export function handleJoinPool(event: JoinPool): void {
         poolShare = PoolShare.load(poolShareId)
     }
     
-    poolShare.balance = poolShareBalance.plus(shares.toBigDecimal())
+    poolShare.balance += tokenToDecimal(shares.toBigDecimal(), 18)
     poolShare.save()
 }
 
@@ -46,6 +47,6 @@ export function handleExitPool(event: ExitPool): void {
     let poolShare = PoolShare.load(poolShareId)
     let poolShareBalance = poolShare.balance
 
-    poolShare.balance = poolShareBalance.minus(shares.toBigDecimal())
+    poolShare.balance -= tokenToDecimal(shares.toBigDecimal(), 18)
     poolShare.save()
 }
