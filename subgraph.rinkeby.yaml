@@ -32,7 +32,7 @@ dataSources:
     name: XTokenWrapper
     network: rinkeby
     source:
-      address: "0x2f438147df9af17a2e03025D6D8516828d983893"
+      address: "0x68668e1F6dF6413d7a8B0c750b8F43Bf857398Af"
       abi: XTokenWrapper
       startBlock: 8609731
     mapping:
@@ -54,7 +54,7 @@ dataSources:
     name: BPoolProxy
     network: rinkeby
     source:
-      address: "0x78b19C2F2062b737fd2c6C6A3A23a7aE0aC1A41C"
+      address: "0x8cb05bd032016d989BCb254A14c071C84e8c2D35"
       abi: BPoolProxy
       startBlock: 8609737 
     mapping:
