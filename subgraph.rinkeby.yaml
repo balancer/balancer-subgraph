@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0xc7D87c0B11288de9fD627e9383f63C953e2FdD72"
       abi: Factory
-      startBlock: 8609548
+      startBlock: 8659061
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -34,7 +34,7 @@ dataSources:
     source:
       address: "0x68668e1F6dF6413d7a8B0c750b8F43Bf857398Af"
       abi: XTokenWrapper
-      startBlock: 8609731
+      startBlock: 8654510
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -56,7 +56,7 @@ dataSources:
     source:
       address: "0x8cb05bd032016d989BCb254A14c071C84e8c2D35"
       abi: BPoolProxy
-      startBlock: 8609737 
+      startBlock: 8654525 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
