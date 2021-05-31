@@ -32,9 +32,9 @@ dataSources:
     name: XTokenWrapper
     network: rinkeby
     source:
-      address: "0x68668e1F6dF6413d7a8B0c750b8F43Bf857398Af"
+      address: "0xa3F80483e696b0dec27796e0EF31d9Bf26FB6253"
       abi: XTokenWrapper
-      startBlock: 8654510
+      startBlock: 8659068
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -54,9 +54,9 @@ dataSources:
     name: BPoolProxy
     network: rinkeby
     source:
-      address: "0x8cb05bd032016d989BCb254A14c071C84e8c2D35"
+      address: "0x0c659296E34497486DD1B747B84295Df66296083"
       abi: BPoolProxy
-      startBlock: 8654525 
+      startBlock: 8659075 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
