@@ -58,7 +58,7 @@ type PoolToken @entity {
     name: String
     decimals: Int!
     address: String!
-    xToken: XToken
+    xToken: XToken 
     balance: BigDecimal!
     denormWeight: BigDecimal!
 }
@@ -131,7 +131,7 @@ enum SwapType {
 
 type Token @entity {
     id: ID!
-    xToken: XToken! 
+    xToken: XToken! @derivedFrom(field: "token")
     name: String
     symbol: String
     decimals: Int
@@ -139,10 +139,10 @@ type Token @entity {
 
 type XToken @entity {
     id: ID!
-    token: Token @derivedFrom(field: "xToken")
+    token: Token! 
     name: String
     symbol: String
     decimals: Int
     paused: Boolean
-    poolToken: PoolToken @derivedFrom(field: "xToken")
+    poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
 }
