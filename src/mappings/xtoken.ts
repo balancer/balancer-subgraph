@@ -1,5 +1,5 @@
 import {  XToken } from '../types/schema'
-import { Paused, Unpaused, Transfer } from '../types/templates/XToken/XToken'
+import { Paused, Unpaused, Transfer, XToken as XTokenAbi } from '../types/templates/XToken/XToken'
 import { Address, log, store, BigInt } from '@graphprotocol/graph-ts'
 import { ZERO_BD, tokenToDecimal, createPoolShareEntity } from './helpers'
 import {
@@ -31,7 +31,7 @@ export function handleTransfer(event: Transfer): void {
   let poolId = xToken.token
   log.debug('handleTransfer called for xtoken {} and token {}',[xTokenAddress, poolId])
   let pool = Pool.load(poolId)
-  const value = event.params.value.toBigDecimal()
+  let value = event.params.value.toBigDecimal()
 
   if(pool == null){
       log.debug('transfer on xtoken {}, token {} not handled because it doesnt correspond to a pool',[xTokenAddress, poolId])
@@ -48,8 +48,9 @@ export function handleTransfer(event: Transfer): void {
       event.params.to.toHex(),
       event.transaction.hash.toHexString(),
     ])
-    // TODO: update pool total shares
-  };
+    let xTokenContract = XTokenAbi.bind(Address.fromString(xTokenAddress))
+    pool.totalShares = tokenToDecimal(xTokenContract.totalSupply().toBigDecimal(), 18)
+  }
 
   let poolShareFromId = poolId.concat('-').concat(event.params.from.toHex())
   let poolShareFrom = PoolShare.load(poolShareFromId)
