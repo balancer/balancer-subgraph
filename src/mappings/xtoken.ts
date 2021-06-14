@@ -1,7 +1,7 @@
 import {  XToken } from '../types/schema'
 import { Paused, Unpaused, Transfer } from '../types/templates/XToken/XToken'
-import { Address, log, BigInt } from '@graphprotocol/graph-ts'
-import {ZERO_BD, tokenToDecimal, createPoolShareEntity} from './helpers'
+import { Address, log, store, BigInt } from '@graphprotocol/graph-ts'
+import { ZERO_BD, tokenToDecimal, createPoolShareEntity } from './helpers'
 import {
   Pool,
   PoolShare,
@@ -31,6 +31,8 @@ export function handleTransfer(event: Transfer): void {
   let poolId = xToken.token
   log.debug('handleTransfer called for xtoken {} and token {}',[xTokenAddress, poolId])
   let pool = Pool.load(poolId)
+  const value = event.params.value.toBigDecimal()
+
   if(pool == null){
       log.debug('transfer on xtoken {}, token {} not handled because it doesnt correspond to a pool',[xTokenAddress, poolId])
       return
@@ -46,47 +48,36 @@ export function handleTransfer(event: Transfer): void {
       event.params.to.toHex(),
       event.transaction.hash.toHexString(),
     ])
+    // TODO: update pool total shares
   };
 
   let poolShareFromId = poolId.concat('-').concat(event.params.from.toHex())
   let poolShareFrom = PoolShare.load(poolShareFromId)
-  let poolShareFromBalance = poolShareFrom == null ? ZERO_BD : poolShareFrom.balance
 
   let poolShareToId = poolId.concat('-').concat(event.params.to.toHex())
   let poolShareTo = PoolShare.load(poolShareToId)
-  let poolShareToBalance = poolShareTo == null ? ZERO_BD : poolShareTo.balance
 
 
-  if (poolShareTo == null) {
-    log.debug('creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share', [poolShareToId, event.params.to.toHex()])
-    createPoolShareEntity(poolShareToId, poolId, event.params.to.toHex())
-    poolShareTo = PoolShare.load(poolShareToId)
+  if(!isMint){
+    if (poolShareFrom == null) {
+      log.critical('sender of transfer : {} does not have a pool share', [event.params.from.toHex()])
+    }
+    poolShareFrom.balance -= tokenToDecimal(value, 18)
+    poolShareFrom.save()
+    if(poolShareFrom.balance.equals(ZERO_BD)){
+      pool.holdersCount -= BigInt.fromI32(1)
+      store.remove('PoolShare', poolShareFrom.id)
+    }
   }
-  poolShareTo.balance += tokenToDecimal(event.params.value.toBigDecimal(), 18)
-  poolShareTo.save()
-
-  if (poolShareFrom == null) {
-    log.debug('creating poolShare with id: {} for liquidity provider {}, due to sender of transfer event not having a pool share', [poolShareFromId, event.params.from.toHex()])
-    createPoolShareEntity(poolShareFromId, poolId, event.params.from.toHex())
-    poolShareFrom = PoolShare.load(poolShareFromId)
-  }
-  poolShareFrom.balance -= tokenToDecimal(event.params.value.toBigDecimal(), 18)
-  poolShareFrom.save()
-
-  if (
-    poolShareTo !== null
-    && poolShareTo.balance.notEqual(ZERO_BD)
-    && poolShareToBalance.equals(ZERO_BD)
-  ) {
-    pool.holdersCount += BigInt.fromI32(1)
-  }
-
-  if (
-    poolShareFrom !== null
-    && poolShareFrom.balance.equals(ZERO_BD)
-    && poolShareFromBalance.notEqual(ZERO_BD)
-  ) {
-    pool.holdersCount -= BigInt.fromI32(1)
+  if(!isBurn){
+    if (poolShareTo == null) {
+      log.debug('creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share', [poolShareToId, event.params.to.toHex()])
+      createPoolShareEntity(poolShareToId, poolId, event.params.to.toHex())
+      poolShareTo = PoolShare.load(poolShareToId)
+      pool.holdersCount += BigInt.fromI32(1)
+    }
+    poolShareTo.balance += tokenToDecimal(value, 18)
+    poolShareTo.save()
   }
 
   pool.save()
