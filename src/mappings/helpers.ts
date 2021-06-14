@@ -13,7 +13,8 @@ import {
   PoolShare,
   TokenPrice,
   Transaction,
-  Balancer
+  Balancer,
+  XToken
 } from '../types/schema'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { BToken } from '../types/templates/Pool/BToken'

@@ -31,19 +31,19 @@ export function handleRegisterToken(event: RegisterToken): void {
 
     if (xToken == null) {
         xToken = new XToken(xTokenId)
-        let erc20Token = ERC20.bind(xTokenIdAddress)
-        let tokenDecimals = erc20Token.try_decimals()
-        let tokenName = erc20Token.try_name()
-        let tokenSymbol = erc20Token.try_symbol()
-        xToken.decimals = !tokenDecimals.reverted
-            ? tokenDecimals.value
-            : DEFAULT_DECIMALS
-        xToken.name = !tokenName.reverted ? tokenName.value : ""
-        xToken.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ""
-        xToken.paused = false
     }
+    let erc20Token = ERC20.bind(xTokenIdAddress)
+    let tokenDecimals = erc20Token.try_decimals()
+    let tokenName = erc20Token.try_name()
+    let tokenSymbol = erc20Token.try_symbol()
+    xToken.decimals = !tokenDecimals.reverted
+        ? tokenDecimals.value
+        : DEFAULT_DECIMALS
+    xToken.name = !tokenName.reverted ? tokenName.value : ""
+    xToken.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ""
+    xToken.paused = false
 
-    token.xToken = xTokenId
+    xToken.token = tokenId
     XTokenAbi.create(xTokenIdAddress)
 
     token.save()
