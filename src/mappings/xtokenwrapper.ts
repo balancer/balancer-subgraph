@@ -12,6 +12,7 @@ export function handleRegisterToken(event: RegisterToken): void {
     let xTokenIdAddress = event.params.xToken
     let tokenId = tokenIdAddress.toHex()
     let xTokenId = xTokenIdAddress.toHex()
+    log.debug('calling handleRegisterToken for token:{} and xtoken: {}',[tokenId, xTokenId])
 
     let token = Token.load(tokenId)
     let xToken = XToken.load(xTokenId)
