@@ -1,4 +1,4 @@
-import { BigInt, Address, Bytes, store } from '@graphprotocol/graph-ts'
+import { BigInt, Address, Bytes, store,log } from '@graphprotocol/graph-ts'
 import { LOG_CALL, LOG_JOIN, LOG_EXIT, LOG_SWAP, Transfer, GulpCall } from '../types/templates/Pool/Pool'
 import { Pool as BPool } from '../types/templates/Pool/Pool'
 import {
@@ -340,77 +340,4 @@ export function handleSwap(event: LOG_SWAP): void {
   swap.save()
 
   saveTransaction(event, 'swap')
-}
-
-/************************************
- *********** POOL SHARES ************
- ************************************/
-
- export function handleTransfer(event: Transfer): void {
-  let poolId = event.address.toHex()
-
-  let ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-  let isMint = event.params.src.toHex() == ZERO_ADDRESS
-  let isBurn = event.params.dst.toHex() == ZERO_ADDRESS
-
-  let poolShareFromId = poolId.concat('-').concat(event.params.src.toHex())
-  let poolShareFrom = PoolShare.load(poolShareFromId)
-  let poolShareFromBalance = poolShareFrom == null ? ZERO_BD : poolShareFrom.balance
-
-  let poolShareToId = poolId.concat('-').concat(event.params.dst.toHex())
-  let poolShareTo = PoolShare.load(poolShareToId)
-  let poolShareToBalance = poolShareTo == null ? ZERO_BD : poolShareTo.balance
-
-  let pool = Pool.load(poolId)
-
-  if (isMint) {
-    if (poolShareTo == null) {
-      createPoolShareEntity(poolShareToId, poolId, event.params.dst.toHex())
-      poolShareTo = PoolShare.load(poolShareToId)
-    }
-    poolShareTo.balance += tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-    poolShareTo.save()
-    pool.totalShares += tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-  } else if (isBurn) {
-    if (poolShareFrom == null) {
-    createPoolShareEntity(poolShareFromId, poolId, event.params.src.toHex())
-    poolShareFrom = PoolShare.load(poolShareFromId)
-  }
-    poolShareFrom.balance -= tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-    poolShareFrom.save()
-    pool.totalShares -= tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-  } else {
-    if (poolShareTo == null) {
-      createPoolShareEntity(poolShareToId, poolId, event.params.dst.toHex())
-      poolShareTo = PoolShare.load(poolShareToId)
-    }
-    poolShareTo.balance += tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-    poolShareTo.save()
-
-    if (poolShareFrom == null) {
-      createPoolShareEntity(poolShareFromId, poolId, event.params.src.toHex())
-      poolShareFrom = PoolShare.load(poolShareFromId)
-    }
-    poolShareFrom.balance -= tokenToDecimal(event.params.amt.toBigDecimal(), 18)
-    poolShareFrom.save()
-  }
-
-  if (
-    poolShareTo !== null
-    && poolShareTo.balance.notEqual(ZERO_BD)
-    && poolShareToBalance.equals(ZERO_BD)
-  ) {
-    pool.holdersCount += BigInt.fromI32(1)
-  }
-
-  if (
-    poolShareFrom !== null
-    && poolShareFrom.balance.equals(ZERO_BD)
-    && poolShareFromBalance.notEqual(ZERO_BD)
-  ) {
-    pool.holdersCount -= BigInt.fromI32(1)
-  }
-
-  pool.save()
 }
