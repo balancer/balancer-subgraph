@@ -44,6 +44,7 @@ export function handleRegisterToken(event: RegisterToken): void {
     xToken.paused = false
 
     xToken.token = tokenId
+    token.xToken = xTokenId
     XTokenAbi.create(xTokenIdAddress)
 
     token.save()
