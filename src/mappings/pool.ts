@@ -274,6 +274,7 @@ export function handleSwap(event: LOG_SWAP): void {
   if (tokenOutPrice != null) {
     tokenOutPriceValue = tokenOutPrice.price
   } else {
+    swap.logInt = BigInt.fromI32(tokensList.length)
     for (let i: i32 = 0; i < tokensList.length; i++) {
       let tokenPriceId = tokensList[i].toHexString()
       if (!tokenOutPriceValue.gt(ZERO_BD) && tokenPriceId !== tokenOut) {

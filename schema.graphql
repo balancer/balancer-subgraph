@@ -48,6 +48,8 @@ type Pool @entity {
     swapsCount: BigInt!
     factoryID: Balancer!
     tx: Bytes                                           # Pool creation transaction id
+    log: String
+    logAddress: Bytes
     swaps: [Swap!] @derivedFrom(field: "poolAddress")
 }
 
@@ -87,6 +89,7 @@ type Swap @entity {
     tokenAmountIn: BigDecimal!              #
     tokenAmountOut: BigDecimal!             #
     poolAddress: Pool
+    logInt: BigInt
     userAddress: User                       # User address that initiates the swap
     value: BigDecimal!                      # Swap value in USD
     feeValue: BigDecimal!                   # Swap fee value in USD
