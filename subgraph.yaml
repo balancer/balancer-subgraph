@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0x9186503AF1D7D3317b4C2c44A815BE984838C296"
       abi: Factory
-      startBlock: 12432945
+      startBlock: 12434307
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -50,28 +50,6 @@ dataSources:
       eventHandlers:
         - event: RegisterToken(indexed address,indexed address)
           handler: handleRegisterToken
-  - kind: ethereum/contract
-    name: BPoolProxy
-    network: mainnet
-    source:
-      address: "0x5321647F3c3769bc7bb9e10aB10d7F5C2E402c56"
-      abi: BPoolProxy
-      startBlock: 12434325
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - Proxy
-      abis:
-        - name: BPoolProxy
-          file: ./abis/BPoolProxy.json
-      eventHandlers:
-        - event: ExitPool(address,address,uint256)
-          handler: handleExitPool
-        - event: JoinPool(address,address,uint256)
-          handler: handleJoinPool
-      file: ./src/mappings/bpoolproxy.ts 
 templates:
   - kind: ethereum/contract
     name: Pool
@@ -122,8 +100,6 @@ templates:
           handler: handleExitPool
         - event: LOG_SWAP(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleSwap
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
   - kind: ethereum/contract
     name: CrpController
     network: mainnet
@@ -151,7 +127,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/xtokenwrapper.ts
+      file: ./src/mappings/xtoken.ts
       entities:
         - XToken
       abis:
@@ -162,3 +138,5 @@ templates:
           handler: handlePaused
         - event: Unpaused(address)
           handler: handleUnpaused
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
