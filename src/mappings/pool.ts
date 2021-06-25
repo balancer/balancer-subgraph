@@ -3,6 +3,7 @@ import { LOG_CALL, LOG_JOIN, LOG_EXIT, LOG_SWAP, Transfer, GulpCall } from '../t
 import { Pool as BPool } from '../types/templates/Pool/Pool'
 import {
   Balancer,
+  XToken,
   Pool,
   PoolToken,
   PoolShare,
@@ -250,8 +251,9 @@ export function handleSwap(event: LOG_SWAP): void {
   poolTokenIn.balance = newAmountIn
   poolTokenIn.save()
 
-  let tokenOut = event.params.tokenOut.toHex()
-  let poolTokenOutId = poolId.concat('-').concat(tokenOut.toString())
+  let xTokenOut = event.params.tokenOut.toHex()
+  let tokenOut = XToken.load(xTokenOut).token
+  let poolTokenOutId = poolId.concat('-').concat(xTokenOut.toString())
   let poolTokenOut = PoolToken.load(poolTokenOutId)
   let tokenAmountOut = tokenToDecimal(event.params.tokenAmountOut.toBigDecimal(), poolTokenOut.decimals)
   let newAmountOut = poolTokenOut.balance.minus(tokenAmountOut)
