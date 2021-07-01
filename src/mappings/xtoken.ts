@@ -66,8 +66,11 @@ export function handleTransfer(event: Transfer): void {
     poolShareFrom.balance -= tokenToDecimal(value, 18)
     poolShareFrom.save()
     if(poolShareFrom.balance.equals(ZERO_BD)){
-      pool.holdersCount -= BigInt.fromI32(1)
       store.remove('PoolShare', poolShareFrom.id)
+      
+      let holders = pool.holders || []
+      let index = holders.indexOf(event.params.to.toHex())
+      holders.splice(index, 1)
     }
   }
   if(!isBurn){
@@ -75,11 +78,16 @@ export function handleTransfer(event: Transfer): void {
       log.debug('creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share', [poolShareToId, event.params.to.toHex()])
       createPoolShareEntity(poolShareToId, poolId, event.params.to.toHex())
       poolShareTo = PoolShare.load(poolShareToId)
-      pool.holdersCount += BigInt.fromI32(1)
+
+      if (pool.holders.indexOf(event.params.to.toHex()) == -1) {
+        pool.holders.push(event.params.to.toHex())
+      }
     }
     poolShareTo.balance += tokenToDecimal(value, 18)
     poolShareTo.save()
   }
+
+  pool.holdersCount = BigInt.fromI32(pool.holders.length)
 
   pool.save()
 }

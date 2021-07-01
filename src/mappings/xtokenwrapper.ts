@@ -13,6 +13,15 @@ export function handleRegisterToken(event: RegisterToken): void {
     let xTokenId = xTokenIdAddress.toHex()
     log.debug('calling handleRegisterToken for token:{} and xtoken: {}',[tokenId, xTokenId])
 
+
+    // skip misconfigured pool on mainnet
+    if(tokenId == '0x8c4167154accd56797d122d8bcaad3a9432ed4af'){
+        return
+    }
+    if(xTokenId == '0xdde53eff3632ed4820c41ffe66cd32a42aba3899' || xTokenId == '0x71b3c05afc180e528529e0c026501e606118894c'){
+        return
+    }
+
     let token = Token.load(tokenId)
     let xToken = XToken.load(xTokenId)
 
