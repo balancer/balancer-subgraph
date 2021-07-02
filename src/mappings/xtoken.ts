@@ -1,6 +1,6 @@
 import {  XToken } from '../types/schema'
 import { Paused, Unpaused, Transfer, XToken as XTokenAbi } from '../types/templates/XToken/XToken'
-import { Address, log, store, BigInt } from '@graphprotocol/graph-ts'
+import { Address, log, store, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { ZERO_BD, tokenToDecimal, createPoolShareEntity } from './helpers'
 import {
   Pool,
@@ -69,8 +69,11 @@ export function handleTransfer(event: Transfer): void {
       store.remove('PoolShare', poolShareFrom.id)
       
       let holders = pool.holders || []
-      let index = holders.indexOf(event.params.to.toHex())
+      let from = Bytes.fromHexString(event.params.from.toHex()) as Bytes
+      let index = holders.indexOf(from)
+
       holders.splice(index, 1)
+      pool.holders = holders
     }
   }
   if(!isBurn){
@@ -78,10 +81,14 @@ export function handleTransfer(event: Transfer): void {
       log.debug('creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share', [poolShareToId, event.params.to.toHex()])
       createPoolShareEntity(poolShareToId, poolId, event.params.to.toHex())
       poolShareTo = PoolShare.load(poolShareToId)
+      let holders: Array<Bytes> = pool.holders || []
+      let to = Bytes.fromHexString(event.params.to.toHex()) as Bytes
 
-      if (pool.holders.indexOf(event.params.to.toHex()) == -1) {
-        pool.holders.push(event.params.to.toHex())
+      if (pool.holders.indexOf(to) == -1) {
+        holders.push(to)
+        pool.holders = holders
       }
+
     }
     poolShareTo.balance += tokenToDecimal(value, 18)
     poolShareTo.save()

@@ -1,150 +1,150 @@
 type Balancer @entity {
-    id: ID!
-    color: String!                                      # Bronze, Silver, Gold
-    poolCount: Int!                                     # Number of pools
-    finalizedPoolCount: Int!                            # Number of finalized pools
-    crpCount: Int!                                      # Number of CRP
-    crpControllerCount: [CrpControllerPoolCount!] @derivedFrom(field: "factoryID") #  crpController by qty
-    privateCount: Int!                                  # Number of finalized and CRP pools
-    pools: [Pool!] @derivedFrom(field: "factoryID")
-    txCount: BigInt!                                    # Number of txs
-    totalLiquidity: BigDecimal!                         # All the pools liquidity value in USD
-    totalSwapVolume: BigDecimal!                        # All the swap volume in USD
-    totalSwapFee: BigDecimal!                           # All the swap fee in USD
+  id: ID!
+  color: String! # Bronze, Silver, Gold
+  poolCount: Int! # Number of pools
+  finalizedPoolCount: Int! # Number of finalized pools
+  crpCount: Int! # Number of CRP
+  crpControllerCount: [CrpControllerPoolCount!] @derivedFrom(field: "factoryID") #  crpController by qty
+  privateCount: Int! # Number of finalized and CRP pools
+  pools: [Pool!] @derivedFrom(field: "factoryID")
+  txCount: BigInt! # Number of txs
+  totalLiquidity: BigDecimal! # All the pools liquidity value in USD
+  totalSwapVolume: BigDecimal! # All the swap volume in USD
+  totalSwapFee: BigDecimal! # All the swap fee in USD
 }
 
 type CrpControllerPoolCount @entity {
-    id: ID!                                             # crp Controller address
-    factoryID: Balancer!                                  # factory Id
-    poolCount: Int!                                     # number of pools controlled by that controller
+  id: ID! # crp Controller address
+  factoryID: Balancer! # factory Id
+  poolCount: Int! # number of pools controlled by that controller
 }
 
 type Pool @entity {
-    id: ID!                                             # Pool address
-    controller: Bytes!                                  # Controller address
-    publicSwap: Boolean!                                # isPublicSwap
-    finalized: Boolean!                                 # isFinalized
-    crp: Boolean!                                       # Is configurable rights pool
-    crpController: Bytes                                # CRP controller address
-    symbol: String                                      # Pool token symbol
-    name: String                                        # Pool token name
-    rights: [String!]!                                  # List of rights (for CRP)
-    cap: BigInt                                         # Maximum supply if any (for CRP)
-    active: Boolean!                                    # isActive
-    swapFee: BigDecimal!                                # Swap Fees
-    totalWeight: BigDecimal!
-    totalShares: BigDecimal!                            # Total pool token shares
-    totalSwapVolume: BigDecimal!                        # Total swap volume in USD
-    totalSwapFee: BigDecimal!                           # Total swap fee in USD
-    liquidity: BigDecimal!                              # Pool liquidity value in USD
-    tokensList: [Bytes!]!                               # Temp workaround until graph supports filtering on derived field
-    tokens: [PoolToken!] @derivedFrom(field: "poolId")
-    shares: [PoolShare!] @derivedFrom(field: "poolId")
-    holders: [Bytes!]!                                  # Temp workaround until graph supports filtering on derived field
-    createTime: Int!                                    # Block time pool was created
-    tokensCount: BigInt!                                # Number of tokens in the pool
-    holdersCount: BigInt!                               # Number of addresses holding a positive balance of BPT
-    joinsCount: BigInt!                                 # liquidity has been added
-    exitsCount: BigInt!                                 # liquidity has been removed
-    swapsCount: BigInt!
-    factoryID: Balancer!
-    tx: Bytes                                           # Pool creation transaction id
-    logAddress: Bytes
-    swaps: [Swap!] @derivedFrom(field: "poolAddress")
+  id: ID! # Pool address
+  controller: Bytes! # Controller address
+  publicSwap: Boolean! # isPublicSwap
+  finalized: Boolean! # isFinalized
+  crp: Boolean! # Is configurable rights pool
+  crpController: Bytes # CRP controller address
+  symbol: String # Pool token symbol
+  name: String # Pool token name
+  rights: [String!]! # List of rights (for CRP)
+  cap: BigInt # Maximum supply if any (for CRP)
+  active: Boolean! # isActive
+  swapFee: BigDecimal! # Swap Fees
+  totalWeight: BigDecimal!
+  totalShares: BigDecimal! # Total pool token shares
+  totalSwapVolume: BigDecimal! # Total swap volume in USD
+  totalSwapFee: BigDecimal! # Total swap fee in USD
+  liquidity: BigDecimal! # Pool liquidity value in USD
+  tokensList: [Bytes!]! # Temp workaround until graph supports filtering on derived field
+  tokens: [PoolToken!] @derivedFrom(field: "poolId")
+  shares: [PoolShare!] @derivedFrom(field: "poolId")
+  holders: [Bytes!]! # Temp workaround until graph supports filtering on derived field
+  createTime: Int! # Block time pool was created
+  tokensCount: BigInt! # Number of tokens in the pool
+  holdersCount: BigInt! # Number of addresses holding a positive balance of BPT
+  joinsCount: BigInt! # liquidity has been added
+  exitsCount: BigInt! # liquidity has been removed
+  swapsCount: BigInt!
+  factoryID: Balancer!
+  tx: Bytes # Pool creation transaction id
+  logAddress: Bytes
+  swaps: [Swap!] @derivedFrom(field: "poolAddress")
 }
 
 type PoolToken @entity {
-    id: ID!                                             # poolId + token address
-    poolId: Pool!
-    symbol: String
-    name: String
-    decimals: Int!
-    address: String!
-    xToken: XToken!
-    balance: BigDecimal!
-    denormWeight: BigDecimal!
+  id: ID! # poolId + token address
+  poolId: Pool!
+  symbol: String
+  name: String
+  decimals: Int!
+  address: String!
+  xToken: XToken!
+  balance: BigDecimal!
+  denormWeight: BigDecimal!
 }
 
 type PoolShare @entity {
-    id: ID!                                             # poolId + userAddress
-    userAddress: User!
-    poolId: Pool!
-    balance: BigDecimal!
+  id: ID! # poolId + userAddress
+  userAddress: User!
+  poolId: Pool!
+  balance: BigDecimal!
 }
 
 type User @entity {
-    id: ID!
-    sharesOwned: [PoolShare!]  @derivedFrom(field: "userAddress")
-    txs: [Transaction!]  @derivedFrom(field: "userAddress")
-    swaps: [Swap!]  @derivedFrom(field: "userAddress")
+  id: ID!
+  sharesOwned: [PoolShare!] @derivedFrom(field: "userAddress")
+  txs: [Transaction!] @derivedFrom(field: "userAddress")
+  swaps: [Swap!] @derivedFrom(field: "userAddress")
 }
 
 type Swap @entity {
-    id: ID!                                 #
-    caller: Bytes!                          #
-    tokenIn: Bytes!                         #
-    tokenInSym: String!                     #
-    tokenOut: Bytes!                        #
-    tokenOutSym: String!                    #
-    tokenAmountIn: BigDecimal!              #
-    tokenAmountOut: BigDecimal!             #
-    poolAddress: Pool
-    userAddress: User                       # User address that initiates the swap
-    value: BigDecimal!                      # Swap value in USD
-    feeValue: BigDecimal!                   # Swap fee value in USD
-    poolTotalSwapVolume: BigDecimal!        # Total pool swap volume in USD
-    poolTotalSwapFee: BigDecimal!           # Total pool swap fee in USD
-    poolLiquidity: BigDecimal!              # Pool liquidity value in USD
-    timestamp: Int!
+  id: ID! #
+  caller: Bytes! #
+  tokenIn: Bytes! #
+  tokenInSym: String! #
+  tokenOut: Bytes! #
+  tokenOutSym: String! #
+  tokenAmountIn: BigDecimal! #
+  tokenAmountOut: BigDecimal! #
+  poolAddress: Pool
+  userAddress: User # User address that initiates the swap
+  value: BigDecimal! # Swap value in USD
+  feeValue: BigDecimal! # Swap fee value in USD
+  poolTotalSwapVolume: BigDecimal! # Total pool swap volume in USD
+  poolTotalSwapFee: BigDecimal! # Total pool swap fee in USD
+  poolLiquidity: BigDecimal! # Pool liquidity value in USD
+  timestamp: Int!
 }
 
 type Transaction @entity {
-    id: ID!                         # Log ID
-    tx: Bytes!
-    event: String
-    block: Int!
-    timestamp: Int!
-    gasUsed: BigDecimal!
-    gasPrice: BigDecimal!
-    poolAddress: Pool
-    userAddress: User
-    action: SwapType
-    sender: Bytes
+  id: ID! # Log ID
+  tx: Bytes!
+  event: String
+  block: Int!
+  timestamp: Int!
+  gasUsed: BigDecimal!
+  gasPrice: BigDecimal!
+  poolAddress: Pool
+  userAddress: User
+  action: SwapType
+  sender: Bytes
 }
 
 type TokenPrice @entity {
-    id: ID!
-    symbol: String!
-    name: String!
-    decimals: Int!
-    price: BigDecimal!
-    poolLiquidity: BigDecimal!
-    poolTokenId: String!
+  id: ID!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  price: BigDecimal!
+  poolLiquidity: BigDecimal!
+  poolTokenId: String!
 }
 
 enum SwapType {
-    swapExactAmountIn,
-    swapExactAmountOut,
-    joinswapExternAmountIn,
-    joinswapPoolAmountOut,
-    exitswapPoolAmountIn,
-    exitswapExternAmountOut
+  swapExactAmountIn
+  swapExactAmountOut
+  joinswapExternAmountIn
+  joinswapPoolAmountOut
+  exitswapPoolAmountIn
+  exitswapExternAmountOut
 }
 
 type Token @entity {
-    id: ID!
-    xToken: XToken!
-    name: String!
-    symbol: String!
-    decimals: Int!
+  id: ID!
+  xToken: XToken!
+  name: String!
+  symbol: String!
+  decimals: Int!
 }
 
 type XToken @entity {
-    id: ID!
-    token: Token!
-    name: String!
-    symbol: String!
-    decimals: Int!
-    paused: Boolean!
-    poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
+  id: ID!
+  token: Token!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  paused: Boolean!
+  poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
 }

@@ -1,4 +1,4 @@
-import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
+import { Address, BigInt, BigDecimal, Bytes } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, Pool, CrpControllerPoolCount} from '../types/schema'
 import { Pool as PoolContract, CrpController as CrpControllerContract, CrpController } from '../types/templates'
