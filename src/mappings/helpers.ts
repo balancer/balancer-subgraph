@@ -14,7 +14,8 @@ import {
   TokenPrice,
   Transaction,
   Balancer,
-  XToken
+  XToken,
+  Token
 } from '../types/schema'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { BToken } from '../types/templates/Pool/BToken'
@@ -27,21 +28,21 @@ let network = dataSource.network()
 
 // Config for mainnet
 let WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-let USD = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+let WBTC = '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599'
 let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
 let CRP_FACTORY = '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
 
 if (network == 'kovan') {
   WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
-  USD = '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5'
+  WBTC = 'fill it when we deploy it'
   DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c'
   CRP_FACTORY = '0x53265f0e014995363AE54DAd7059c018BaDbcD74'
 }
 
 if (network == 'rinkeby') {
-  WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
-  USD = '0x21f3179cadae46509f615428f639e38123a508ac'
-  DAI = '0x947b4082324af403047154f9f26f14538d775194'
+  WETH = '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea'
+  WBTC = '0x2370694665fecc03c86693e9a03b6874e9321372'
+  DAI = '0x98e06323f0008dd8990229c3ff299353b69491c0'
   CRP_FACTORY = '0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4'
 }
 
@@ -156,71 +157,73 @@ export function updatePoolLiquidity(id: string): void {
 
   // Find pool liquidity
 
-  let hasPrice = false
-  let hasUsdPrice = false
   let poolLiquidity = ZERO_BD
+  let DAIToken = Token.load(DAI)
+  let DAIXTokenAddress = DAIToken.xToken
+  let WETHToken = Token.load(WETH)
+  let WETHXTokenAddress = WETHToken.xToken
+  let WBTCToken = Token.load(WBTC)
+  let WBTCXTokenAddress = WBTCToken.xToken
 
-  if (tokensList.includes(Address.fromString(USD))) {
-    let usdPoolTokenId = id.concat('-').concat(USD)
-    let usdPoolToken = PoolToken.load(usdPoolTokenId)
-    poolLiquidity = usdPoolToken.balance.div(usdPoolToken.denormWeight).times(pool.totalWeight)
-    hasPrice = true
-    hasUsdPrice = true
-  } else if (tokensList.includes(Address.fromString(WETH))) {
-    let wethTokenPrice = TokenPrice.load(WETH)
-    if (wethTokenPrice !== null) {
-      let poolTokenId = id.concat('-').concat(WETH)
-      let poolToken = PoolToken.load(poolTokenId)
-      poolLiquidity = wethTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
-      hasPrice = true
-    }
-  } else if (tokensList.includes(Address.fromString(DAI))) {
-    let daiTokenPrice = TokenPrice.load(DAI)
-    if (daiTokenPrice !== null) {
-      let poolTokenId = id.concat('-').concat(DAI)
-      let poolToken = PoolToken.load(poolTokenId)
-      poolLiquidity = daiTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
-      hasPrice = true
-    }
+  let DAIIsAComponent = false;
+  let WBTCIsAComponent = false;
+  let WETHIsAComponent = false;
+  let WBTCTokenPrice = TokenPrice.load(WBTC)
+  let WETHTokenPrice = TokenPrice.load(WETH)
+
+  for(let i:i32 = 0; i < tokensList.length; i++){
+    if(tokensList[i].toHex() == DAIXTokenAddress) DAIIsAComponent = true;
+    if(tokensList[i].toHex() == WBTCXTokenAddress) WBTCIsAComponent = true;
+    if(tokensList[i].toHex() == WETHXTokenAddress) WETHIsAComponent = true;
   }
 
-  // Create or update token price
+  if (DAIIsAComponent){
+    let poolTokenId = id.concat('-').concat(DAIXTokenAddress)
+    let poolToken = PoolToken.load(poolTokenId)
+    poolLiquidity = poolToken.balance.div(poolToken.denormWeight).times(pool.totalWeight)
+  } else if (WBTCIsAComponent && WBTCTokenPrice != null){
+    let poolTokenId = id.concat('-').concat(WBTCXTokenAddress)
+    let poolToken = PoolToken.load(poolTokenId)
+    poolLiquidity = WBTCTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+  } else if (WETHIsAComponent && WETHTokenPrice != null){
+    let poolTokenId = id.concat('-').concat(WETHXTokenAddress)
+    let poolToken = PoolToken.load(poolTokenId)
+    poolLiquidity = WETHTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+  }
 
-  if (hasPrice) {
-    for (let i: i32 = 0; i < tokensList.length; i++) {
-      let tokenPriceId = tokensList[i].toHexString()
-      let tokenPrice = TokenPrice.load(tokenPriceId)
-      if (tokenPrice == null) {
-        tokenPrice = new TokenPrice(tokenPriceId)
-        tokenPrice.poolTokenId = ''
-        tokenPrice.poolLiquidity = ZERO_BD
-      }
+  // // Create or update token price
 
-      let poolTokenId = id.concat('-').concat(tokenPriceId)
-      let poolToken = PoolToken.load(poolTokenId)
-
-      if (
-        pool.active && !pool.crp && pool.tokensCount.notEqual(BigInt.fromI32(0)) && pool.publicSwap &&
-        (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity)) &&
-        (
-          (tokenPriceId != WETH.toString() && tokenPriceId != DAI.toString()) ||
-          (pool.tokensCount.equals(BigInt.fromI32(2)) && hasUsdPrice)
-        )
-      ) {
-        tokenPrice.price = ZERO_BD
-
-        if (poolToken.balance.gt(ZERO_BD)) {
-          tokenPrice.price = poolLiquidity.div(pool.totalWeight).times(poolToken.denormWeight).div(poolToken.balance)
-        }
-
-        tokenPrice.symbol = poolToken.symbol
-        tokenPrice.name = poolToken.name
-        tokenPrice.decimals = poolToken.decimals
-        tokenPrice.poolLiquidity = poolLiquidity
-        tokenPrice.poolTokenId = poolTokenId
-        tokenPrice.save()
-      }
+  for (let i: i32 = 0; poolLiquidity.gt(ZERO_BD) && i < tokensList.length; i++) {
+    // use the token
+    let tokenPriceId = XToken.load(tokensList[i].toHexString()).token
+    let tokenPrice = TokenPrice.load(tokenPriceId)
+    if (tokenPrice == null) {
+      tokenPrice = new TokenPrice(tokenPriceId)
+      tokenPrice.poolTokenId = ''
+      tokenPrice.poolLiquidity = ZERO_BD
     }
+
+    // here we use the xtoken
+    let poolTokenId = id.concat('-').concat(tokensList[i].toHexString())
+    let poolToken = PoolToken.load(poolTokenId)
+
+    if (
+      pool.active && !pool.crp && pool.tokensCount.notEqual(BigInt.fromI32(0)) && pool.publicSwap &&
+      (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity))
+    ) {
+      tokenPrice.price = ZERO_BD
+
+      if (poolToken.balance.gt(ZERO_BD)) {
+        tokenPrice.price = poolLiquidity.div(pool.totalWeight).times(poolToken.denormWeight).div(poolToken.balance)
+      }
+
+      tokenPrice.symbol = poolToken.symbol
+      tokenPrice.name = poolToken.name
+      tokenPrice.decimals = poolToken.decimals
+      tokenPrice.poolLiquidity = poolLiquidity
+      tokenPrice.poolTokenId = poolTokenId
+    }
+    tokenPrice.save()
   }
 
   // Update pool liquidity
@@ -229,10 +232,10 @@ export function updatePoolLiquidity(id: string): void {
   let denormWeight = ZERO_BD
 
   for (let i: i32 = 0; i < tokensList.length; i++) {
-    let tokenPriceId = tokensList[i].toHexString()
+    let tokenPriceId = XToken.load(tokensList[i].toHexString()).token
     let tokenPrice = TokenPrice.load(tokenPriceId)
     if (tokenPrice !== null) {
-      let poolTokenId = id.concat('-').concat(tokenPriceId)
+      let poolTokenId = id.concat('-').concat(tokensList[i].toHexString())
       let poolToken = PoolToken.load(poolTokenId)
       if (tokenPrice.price.gt(ZERO_BD) && poolToken.denormWeight.gt(denormWeight)) {
         denormWeight = poolToken.denormWeight

@@ -48,6 +48,7 @@ type Pool @entity {
     swapsCount: BigInt!
     factoryID: Balancer!
     tx: Bytes                                           # Pool creation transaction id
+    logAddress: Bytes
     swaps: [Swap!] @derivedFrom(field: "poolAddress")
 }
 
@@ -112,12 +113,12 @@ type Transaction @entity {
 
 type TokenPrice @entity {
     id: ID!
-    symbol: String
-    name: String
+    symbol: String!
+    name: String!
     decimals: Int!
     price: BigDecimal!
     poolLiquidity: BigDecimal!
-    poolTokenId: String
+    poolTokenId: String!
 }
 
 enum SwapType {

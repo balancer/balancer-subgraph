@@ -92,10 +92,6 @@ templates:
         - event: LOG_CALL(indexed bytes4,indexed address,bytes)
           topic0: "0xcf5e7bd300000000000000000000000000000000000000000000000000000000"
           handler: handleUnbind
-        - event: LOG_JOIN(indexed address,indexed address,uint256)
-          handler: handleJoinPool
-        - event: LOG_EXIT(indexed address,indexed address,uint256)
-          handler: handleExitPool
         - event: LOG_SWAP(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleSwap
         - event: Transfer(indexed address,indexed address,uint256)
