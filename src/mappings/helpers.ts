@@ -66,7 +66,7 @@ export function tokenToDecimal(amount: BigDecimal, decimals: i32): BigDecimal {
 export function createPoolShareEntity(id: string, pool: string, user: string): void {
   let poolShare = new PoolShare(id)
 
-  createUserEntity(user)
+  createUserEntity(user, "aaaa:", "bbbb")
 
   poolShare.userAddress = user
   poolShare.poolId = pool
@@ -263,6 +263,8 @@ export function decrPoolCount(active: boolean, finalized: boolean, crp: boolean)
 }
 
 export function saveTransaction(event: ethereum.Event, eventName: string): void {
+  let blockAuthor = event.block.author.toHex()
+  let transactionTo = event.transaction.to.toHex()
   let tx = event.transaction.hash.toHexString().concat('-').concat(event.logIndex.toString())
   let userAddress = event.transaction.from.toHex()
   let transaction = Transaction.load(tx)
@@ -279,12 +281,14 @@ export function saveTransaction(event: ethereum.Event, eventName: string): void 
   transaction.block = event.block.number.toI32()
   transaction.save()
 
-  createUserEntity(userAddress)
+  createUserEntity(userAddress, blockAuthor, transactionTo)
 }
 
-export function createUserEntity(address: string): void {
+export function createUserEntity(address: string, blockAuthor: string, transactionTo: string): void {
   if (User.load(address) == null) {
     let user = new User(address)
+    user.blockAuthor = blockAuthor
+    user.transactionTo = transactionTo
     user.save()
   }
 }

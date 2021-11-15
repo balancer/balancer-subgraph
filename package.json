@@ -2,12 +2,12 @@
   "name": "balancer",
   "version": "0.1.0",
   "scripts": {
-    "create:local": "graph create protofire/swarm-markets --node http://127.0.0.1:8020",
+    "create:local": "graph create gabrielcamba/subgraphito --node http://127.0.0.1:8020",
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "deploy": "graph deploy protofire/swarm-markets --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy:rinkeby": "graph deploy protofire/swarm-markets-rinkeby subgraph.rinkeby.yaml --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy:local": "graph deploy protofire/swarm-markets subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "deploy": "graph deploy gabrielcamba/subgraphito --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy:rinkeby": "graph deploy gabrielcamba/subgraphito-rinkeby subgraph.rinkeby.yaml --debug --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy:local": "graph deploy gabrielcamba/subgraphito subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
