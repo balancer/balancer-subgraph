@@ -19,8 +19,10 @@ import {
 } from '../types/schema'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { BToken } from '../types/templates/Pool/BToken'
+import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
 import { CRPFactory } from '../types/Factory/CRPFactory'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
+
 
 export let ZERO_BD = BigDecimal.fromString('0')
 
@@ -66,7 +68,10 @@ export function tokenToDecimal(amount: BigDecimal, decimals: i32): BigDecimal {
 export function createPoolShareEntity(id: string, pool: string, user: string): void {
   let poolShare = new PoolShare(id)
 
-  createUserEntity(user, "aaaa:", "bbbb")
+  let gnosisSafe = GnosisSafe.bind(Address.fromString(user))
+  let getOwnersCall = gnosisSafe.try_getOwners()
+  let userAddress = getOwnersCall.reverted ? 'CALCULATE_CPK' : getOwnersCall.value.pop().toHexString()
+  createUserEntity(user, userAddress)
 
   poolShare.userAddress = user
   poolShare.poolId = pool
@@ -281,14 +286,18 @@ export function saveTransaction(event: ethereum.Event, eventName: string): void 
   transaction.block = event.block.number.toI32()
   transaction.save()
 
-  createUserEntity(userAddress, blockAuthor, transactionTo)
+  createUserEntity(userAddress, userAddress)
 }
 
-export function createUserEntity(address: string, blockAuthor: string, transactionTo: string): void {
+export function createUserEntity(address: string, userAddress: string): void {
   if (User.load(address) == null) {
     let user = new User(address)
-    user.blockAuthor = blockAuthor
-    user.transactionTo = transactionTo
+    user.userAddress = userAddress
+    if (address == userAddress) {
+      user.isCpkId = false
+    } else {
+      user.isCpkId = true
+    }
     user.save()
   }
 }

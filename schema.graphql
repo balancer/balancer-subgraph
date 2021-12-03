@@ -74,8 +74,8 @@ type PoolShare @entity {
 
 type User @entity {
   id: ID!
-  transactionTo: String!
-  blockAuthor: String!
+  isCpkId: Boolean!
+  userAddress: String!
   sharesOwned: [PoolShare!] @derivedFrom(field: "userAddress")
   txs: [Transaction!] @derivedFrom(field: "userAddress")
   swaps: [Swap!] @derivedFrom(field: "userAddress")
