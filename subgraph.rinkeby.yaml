@@ -133,6 +133,8 @@ templates:
       abis:
         - name: XToken
           file: ./abis/XToken.json
+        - name: GnosisSafe
+          file: ./abis/GnosisSafe.json
       eventHandlers:
         - event: Paused(address)
           handler: handlePaused
